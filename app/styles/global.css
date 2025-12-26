@@ -1,0 +1,70 @@
+@import "tailwindcss";
+@import "./fonts.css";
+
+@theme {
+
+  --font-garamond: "EB Garamond", sans-serif;
+  --font-figtree: "Figtree", sans-serif;
+
+  --color-filmo-black-100: #161312;
+  --color-filmo-black-80: #18181C;
+
+  --color-filmo-white: #F2F0EB;
+  --color-filmo-soft-white: #D7D7D7;
+  --color-filmo-gray: #767676;
+
+  --color-filmo-yellow-100: #FEC526;
+
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+.bg-noise {
+  background-image: none;
+}
+
+@media (max-width: 768px) {
+  .bg-noise {
+    background-image: url('/svg/noise.svg');
+    background-repeat: repeat;
+    background-size: contain;
+  }
+}
+
+/* 💻 DESKTOP GRANDE */
+@media (min-width: 1400px) {
+  .bg-noise {
+    background-image: url('/svg/noise.svg');
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.fade {
+  transition: opacity 0.3s ease-in-out;
+}
+
+.fade-in {
+  opacity: 1;
+}
+
+.fade-out {
+  opacity: 0;
+}
+
+body {
+  scroll-behavior: smooth !important;
+}

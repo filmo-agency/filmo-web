@@ -1,0 +1,97 @@
+/* EB Garamond */
+@font-face {
+  font-family: "EB Garamond";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/Garamond/EBGaramond-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: "EB Garamond";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/Garamond/EBGaramond-Medium.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: "EB Garamond";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/Garamond/EBGaramond-SemiBold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: "EB Garamond";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/Garamond/EBGaramond-Bold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: "EB Garamond";
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('/fonts/Garamond/EBGaramond-ExtraBold.ttf') format('truetype');
+}
+
+/* Figtree */
+@font-face {
+  font-family: "Figtree";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('/fonts/Figtree/Figtree-Light.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: "Figtree";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/Figtree/Figtree-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: "Figtree";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/Figtree/Figtree-Medium.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: "Figtree";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/Figtree/Figtree-SemiBold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: "Figtree";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/Figtree/Figtree-Bold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: "Figtree";
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('/fonts/Figtree/Figtree-ExtraBold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: "Figtree";
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url('/fonts/Figtree/Figtree-Black.ttf') format('truetype');
+}
