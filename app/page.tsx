@@ -245,7 +245,7 @@ export default async function Home() {
               <div className="self-end">
                 <UnderlinedButton
                   linkTo="#lastWorks"
-                  text="Nuestro ultimo trabajo"
+                  text="Nuestro último trabajo"
                   styles=""
                 />
               </div>
