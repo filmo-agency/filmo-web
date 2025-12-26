@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import IgPost from '../ui/IgPost';
 import IgButton from '../ui/IgButton';
 
-import { getStrapiData } from '@/app/lib/strapi';
+import { getInstagramPosts } from '@/app/lib/ig';
 
 type InstagramPost = {
   id: string;
@@ -25,7 +25,7 @@ export default function Instagram() {
   useEffect(() => {
     async function fetchPosts() {
       try {
-        const data = await getStrapiData('/api/ig') as InstagramPost[] | null;
+    const data = await getInstagramPosts<InstagramPost[]>();
         if (data) setPosts(data);
       } catch (error) {
         console.error('Error loading Instagram posts:', error);
