@@ -1,6 +1,4 @@
-// export const STRAPI_BASE_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
-export const STRAPI_BASE_URL = 'http://localhost:1337';
-
+export const STRAPI_BASE_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
 export async function getStrapiData(url: string) {
   try {
     const response = await fetch(`${STRAPI_BASE_URL}${url}`, {
