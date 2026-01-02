@@ -1,4 +1,4 @@
-export async function getInstagramPosts<T>() : Promise<T | null> {
+export async function getInstagramPosts<T>(): Promise<T | null> {
   try {
     const res = await fetch('/api/ig');
 
@@ -6,7 +6,7 @@ export async function getInstagramPosts<T>() : Promise<T | null> {
       throw new Error('Failed to fetch Instagram posts');
     }
 
-    return await res.json();
+    return (await res.json()) as T;
   } catch (error) {
     console.error('IG fetch error:', error);
     return null;

@@ -1,4 +1,4 @@
-import { Metadata } from 'next';
+
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -10,15 +10,18 @@ import CTA from '../../components/sections/CTA';
 import Instagram from '../../components/sections/Instagram';
 import PromPreview from '../../components/ui/PromPreview';
 
+export const dynamic = 'force-static';
+
 export default async function SchoolPage({
   params,
 }: {
-  params: Promise<{ schoolId: string }>;
+  params: { slug: string } | Promise<{ slug: string }>;
 }) {
 
-  const { schoolId } = await params;
+  const resolvedParams = await params;
+  const { slug } = resolvedParams;
 
-  const school = await getStrapiData(`/api/schools/${schoolId}`);
+  const school = await getStrapiData(`/api/schools/${slug}`);
 
   return (
     <div className="bg-filmo-black-100 flex flex-col">
@@ -36,7 +39,7 @@ export default async function SchoolPage({
               </Link>
               <span>|</span>
               <p className="text-filmo-yellow-100 font-bold capitalize">
-                {schoolId}
+                {slug}
               </p>
             </div>
 

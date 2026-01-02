@@ -7,14 +7,14 @@ import { useEffect } from 'react';
 import UnderlinedButton from './UnderlinedButton';
 
 export default function SchoolPreview({
-  schoolId,
-  schoolName,
-  schoolLogo,
+  slug,
+  name,
+  logo,
   videoURL,
 }: {
-  schoolId: string;
-  schoolName: string;
-  schoolLogo: string;
+  slug: string;
+  name: string;
+  logo: string;
   videoURL: string;
 }) {
 
@@ -70,15 +70,15 @@ export default function SchoolPreview({
   return (
     <div className="group w-full flex flex-col items-center justify-end gap-2 max-[1400px]:gap-4 transition-all">
       <h1 className="font-garamond text-center text-4xl w-[30ch] max-md:w-auto max-[1400px]:w-auto max-[1400px]:text-5xl max-md:text-3xl font-extrabold text-white">
-        {schoolName}
+        {name}
       </h1>
 
       <Link
-        href={`/portafolio/${schoolId}`}
+        href={`/portafolio/${slug}`}
         className="w-full max-[1400px]:w-auto overflow-hidden rounded-xl"
       >
         <video
-          preload="auto"
+          preload="metadata"
           className="transition-all duration-300 grayscale group-hover:grayscale-0 wrap-video h-[360px] max-md:h-full max-md:w-full rounded-xl object-cover max-[1400px]:aspect-video max-[1400px]:h-[500px] max-[1400px]:w-auto"
           muted
           loop
@@ -89,14 +89,14 @@ export default function SchoolPreview({
       </Link>
 
       <Image
-        src={schoolLogo}
+        src={logo}
         className="h-20 max-md:h-8 rounded-xl object-contain grayscale transition-all duration-300 group-hover:grayscale-0"
         alt=""
         height={80}
         width={200}
       />
 
-      <UnderlinedButton linkTo={`/portafolio/${schoolId}`} text="ver más" styles=''/>
+      <UnderlinedButton linkTo={`/portafolio/${slug}`} text="ver más" styles=''/>
     </div>
   );
 }

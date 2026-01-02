@@ -1,13 +1,15 @@
-export const STRAPI_BASE_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+// export const STRAPI_BASE_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+export const STRAPI_BASE_URL = 'http://localhost:1337';
 
 export async function getStrapiData(url: string) {
   try {
-    const response = await fetch(`${STRAPI_BASE_URL}${url}`);
+    const response = await fetch(`${STRAPI_BASE_URL}${url}`, {
+      next: { revalidate: 60 * 60 * 24}
+    });
     if (!response.ok) {
       throw new Error(`Error fetching data from Strapi: ${response.statusText}`);
     }
-    const data = (await response.json());
-    return data;
+    return response.json();
   } catch (error) {
     console.error(error);
   }

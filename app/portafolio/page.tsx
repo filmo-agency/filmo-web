@@ -1,4 +1,4 @@
-import { Metadata } from 'next';
+export const dynamic = 'force-static';
 
 import Footer from '../components/layouts/Footer';
 import Navbar from '../components/layouts/Navbar';
@@ -108,9 +108,9 @@ export default async function Portafolio() {
                     key={school.id}
                   >
                     <SchoolPreview
-                      schoolName={school.name}
-                      schoolId={school.id}
-                      schoolLogo={school.logo}
+                      name={school.name}
+                      slug={school.id}
+                      logo={school.logo}
                       videoURL={school.cover}
                     />
                   </div>

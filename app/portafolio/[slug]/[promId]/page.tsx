@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 
 import Footer from '@/app/components/layouts/Footer';
@@ -9,14 +10,38 @@ import PromCollage from '../../../components/sections/PromCollage';
 import CoverCollage from '../../../components/ui/CoverCollage';
 import { getStrapiData, toRoman } from '../../../lib/strapi';
 
+export async function generateStaticParams() {
+  const schools: { slug: string }[] =
+    await getStrapiData('/api/schools/slugs');
+
+  const params: { slug: string; promId: string }[] = [];
+
+  for (const school of schools) {
+    const proms: { promId: number }[] =
+      await getStrapiData(`/api/schools/${school.slug}/proms`);
+
+    for (const prom of proms) {
+      params.push({
+        slug: school.slug,
+        promId: String(prom.promId),
+      });
+    }
+  }
+  return params;
+}
+
+export const dynamic = 'force-static';
+
 export default async function promPage({
   params,
 }: {
-  params: Promise<{ schoolId: string; promId: string }>;
+  params: {slug: string; promId: string} | Promise<{slug: string; promId: string}>;
 }) {
-
-  const { schoolId, promId } = await params;
-  const prom = await getStrapiData(`/api/schools/${schoolId}/proms/${promId}`);
+  
+  const resolvedParams = await params;
+  const { slug, promId } = resolvedParams;
+  const prom = await getStrapiData(`/api/schools/${slug}/proms/${promId}`);
+  
   return (
     <div className="bg-filmo-black-100 flex flex-col">
       <Navbar />
@@ -34,23 +59,23 @@ export default async function promPage({
               <span>|</span>
               <Link
                 className="underline underline-offset-3 capitalize transition-all duration-200 hover:text-filmo-yellow-100"
-                href={`/portafolio/${schoolId}/`}
+                href={`/portafolio/${slug}/`}
               >
-                {schoolId}
+                {slug}
               </Link>
               <span>|</span>
               <p className="text-filmo-yellow-100 font-bold max-md:text-sm">
-                {schoolId === 'interamerican' 
-                  ? `Class of ${toRoman(Number(promId), schoolId)}` 
-                  : `Promoción ${toRoman(Number(promId), schoolId)}`}
+                {slug === 'interamerican' 
+                  ? `Class of ${toRoman(Number(promId), slug)}` 
+                  : `Promoción ${toRoman(Number(promId), slug)}`}
               </p>
             </div>
 
             <div className="flex flex-col items-center gap-5">
               <h1 className="font-garamond text-8xl font-extrabold text-white max-md:text-6xl">
-                {schoolId === 'interamerican' 
-                  ? `Class of ${toRoman(Number(promId), schoolId)}` 
-                  : `Promoción ${toRoman(Number(promId), schoolId)}`}
+                {slug === 'interamerican' 
+                  ? `Class of ${toRoman(Number(promId), slug)}` 
+                  : `Promoción ${toRoman(Number(promId), slug)}`}
               </h1>
 
               <div className="font-figtree text-filmo-soft-white w-[26ch] text-2xl max-md:w-auto max-md:text-xl">
