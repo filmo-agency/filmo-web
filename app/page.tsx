@@ -284,7 +284,7 @@ export default async function Home() {
               const selectedSchools: any[] = [];
 
               const americano = schools.find(
-                (school) => school.id === 'americano'
+                (school) => school.slug === 'americano'
               );
 
               if (americano) {
@@ -300,11 +300,11 @@ export default async function Home() {
 
               return selectedSchools.map((school: any) => (
                 <LastWork
-                  key={school.id}
+                  key={school.slug}
                   image={`${school.prom.cover}`}
                   prom={school.prom.id}
                   school={school.name}
-                  link={`/portafolio/${school.id}/${school.prom.id}`}
+                  link={`/portafolio/${school.slug}/${school.prom.id}`}
                   styles=""
                 />
               ));
