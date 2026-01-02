@@ -17,13 +17,13 @@ export async function generateStaticParams() {
   const params: { slug: string; promId: string }[] = [];
 
   for (const school of schools) {
-    const proms: { promId: number }[] =
+    const proms: { prom: number }[] =
       await getStrapiData(`/api/schools/${school.slug}/proms`);
 
     for (const prom of proms) {
       params.push({
         slug: school.slug,
-        promId: String(prom.promId),
+        promId: String(prom.prom),
       });
     }
   }
