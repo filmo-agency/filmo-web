@@ -9,14 +9,14 @@ import { getInstagramPosts } from '@/app/lib/ig';
 type InstagramPost = {
   id: string;
   media_type: 'IMAGE' | 'VIDEO' | 'CAROUSEL_ALBUM';
-  media_url: string;
-  thumbnail_url?: string;
+  mediaUrl: string;
+  thumbnailUrl?: string;
   permalink: string;
   caption?: string;
 };
 
 function getCoverUrl(post: InstagramPost) {
-  return post.thumbnail_url ?? post.media_url;
+  return post.thumbnailUrl ?? post.mediaUrl;
 }
 
 export default function Instagram() {
