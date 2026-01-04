@@ -21,7 +21,7 @@ export default function LastWork({
     >
       <Image
         src={image}
-        alt=""
+        alt={school}
         className="w-full h-[335px] rounded-xl object-cover"
         width={500}
         height={335}

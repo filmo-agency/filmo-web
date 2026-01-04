@@ -3,9 +3,15 @@ import Link from 'next/link';
 
 export default function Footer() {
   return (
-    <div className="bg-noise bg-filmo-black-100 z-10 flex flex-col items-center justify-center gap-8 px-48 py-32 max-md:px-6 max-md:py-12">
+    <div className="bg-filmo-black-100 bg-noise z-50 flex flex-col items-center justify-center gap-8 px-48 py-32 max-md:px-6 max-md:py-12 w-full">
       <Link href="/">
-        <Image src="/svg/filmo.svg" className="w-28 max-md:w-20 pl-2" alt="" width={0} height={0} />
+        <Image
+          src="/svg/filmo.svg"
+          className="w-28 max-md:w-20 pl-2"
+          alt="filmo-logo"
+          width={0}
+          height={0}
+        />
       </Link>
       <p className="font-figtree text-filmo-soft-white w-[50ch] max-md:w-full max-md:text-sm text-center text-lg font-medium ">
         Nos metemos en el ritmo, en la emoción y en el caos lindo que es cada

@@ -3,7 +3,6 @@
 import { useState, useMemo } from 'react';
 import Image from 'next/image';
 
-// Definición de tipos actualizada para reflejar las dos URLs
 interface Pic {
   id: string | number;
   url: string;
@@ -19,18 +18,17 @@ interface CoverCollageProps {
 function CollageImage({ pic, delay }: { pic: Pic, delay: number }) {
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Clases Tailwind CSS para la animación
   const imageClasses = `
     rounded-lg 
     h-80 
     w-auto 
+    max-md:h-48
     object-cover 
-    transition-opacity duration-350
+    transition-opacity duration-0
     ${isLoaded ? 'opacity-100' : 'opacity-0'}
   `;
 
   const handleImageLoad = () => {
-    // Aplicar el retraso escalonado después de que la imagen optimizada ha cargado
     setTimeout(() => {
       setIsLoaded(true); 
     }, delay);
@@ -39,6 +37,7 @@ function CollageImage({ pic, delay }: { pic: Pic, delay: number }) {
   return (
     <div className="shrink-0"> 
       <Image
+        preload={true}
         key={pic.id}
         src={pic.optimizedUrl} 
         alt={pic.optimizedUrl}
@@ -90,14 +89,14 @@ export default function CoverCollage({ promPics }: CoverCollageProps) {
     return { ROWS, COLS, rows };
   }, [pics]); 
 
-  const BASE_DELAY_MS = 100; 
+  const BASE_DELAY_MS = 0; 
 
   return (
-    <div className="flex h-full flex-col gap-4 w-full -rotate-6 fixed z-0 opacity-10">
+    <div className="flex h-full flex-col gap-4 max-md:gap-2 w-full -rotate-6 fixed z-0 opacity-10">
       {rows.map((row, rIndex) => (
         <div
           key={rIndex}
-          className="flex flex-row gap-4 w-full justify-center" 
+          className={`ml-${rIndex % 2 === 0 ? '0' : '12'} flex flex-row gap-4 max-md:gap-2 w-full justify-center`}
         >
           {row.map((pic: Pic, cIndex) => {
             const globalIndex = rIndex * COLS + cIndex;

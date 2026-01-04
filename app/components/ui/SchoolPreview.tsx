@@ -68,8 +68,8 @@ export default function SchoolPreview({
   }, []);
 
   return (
-    <div className="group w-full flex flex-col items-center justify-end gap-2 max-[1400px]:gap-4 transition-all">
-      <h1 className="font-garamond text-center text-4xl w-[30ch] max-md:w-auto max-[1400px]:w-auto max-[1400px]:text-5xl max-md:text-3xl font-extrabold text-white">
+    <article className="group w-full flex flex-col items-center justify-end gap-2 max-[1400px]:gap-4 transition-all">
+      <h1 className="text-balance font-garamond text-center text-4xl max-md:w-full max-[1400px]:w-full max-[1400px]:text-5xl max-md:text-3xl font-extrabold text-white">
         {name}
       </h1>
 
@@ -83,6 +83,7 @@ export default function SchoolPreview({
           muted
           loop
           playsInline
+          aria-hidden="true"
         >
           <source src={videoURL} type="video/mp4" />
         </video>
@@ -91,12 +92,12 @@ export default function SchoolPreview({
       <Image
         src={logo}
         className="h-20 max-md:h-8 rounded-xl object-contain grayscale transition-all duration-300 group-hover:grayscale-0"
-        alt=""
+        alt={logo}
         height={80}
         width={200}
       />
 
       <UnderlinedButton linkTo={`/portafolio/${slug}`} text="ver más" styles=''/>
-    </div>
+    </article>
   );
 }

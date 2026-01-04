@@ -62,7 +62,7 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav
+    <header
       id="navbar"
       className="fixed z-50 flex w-full items-center justify-between bg-linear-to-b from-[#0C0A09] to-white/0 px-42 py-12 transition-all duration-300 max-md:h-24 max-md:px-8 max-md:items-center max-[1400px]:h-fit max-[1400px]:px-16"
     >
@@ -71,7 +71,7 @@ export default function Navbar() {
           id="navbar-logo"
           src="/svg/filmo.svg"
           className="z-20 h-20 max-md:h-10 max-[1400px]:h-10 transition-all duration-300"
-          alt=""
+          alt="filmo-logo"
           width={96}
           height={24}
         />
@@ -93,15 +93,15 @@ export default function Navbar() {
 
       <div className="h-full hidden max-md:flex items-center gap-4">
         <Link href="/">
-          <Image src="/svg/house.svg" className="" alt="" width={36} height={24} />
+          <Image src="/svg/house.svg" className="" alt="inicio" width={36} height={24} />
         </Link>
         <Link href="/portafolio">
-          <Image src="/svg/camera.svg" className="" alt="" width={40} height={24} />
+          <Image src="/svg/camera.svg" className="" alt="portafolio" width={40} height={24} />
         </Link>
         <Link href="https://wa.me/+593983903842" target='_blank'>
-          <Image src="/svg/ws1.svg" className="" alt="" width={36} height={24} />
+          <Image src="/svg/ws1.svg" className="" alt="whatsapp" width={36} height={24} />
         </Link>
       </div>
-    </nav>
+    </header>
   );
 }

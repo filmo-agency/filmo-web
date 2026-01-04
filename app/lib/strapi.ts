@@ -45,3 +45,8 @@ export function toRoman(num: number, id: string): string | number {
 
   return result;
 }
+
+export function capitalizeSlug(slug: string) {
+  if (!slug) return '';
+  return slug.charAt(0).toUpperCase() + slug.slice(1);
+}

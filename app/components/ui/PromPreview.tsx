@@ -2,6 +2,7 @@ import Image from 'next/image';
 
 import { toRoman } from '../../lib/strapi';
 import UnderlinedButton from '../ui/UnderlinedButton';
+import Link from 'next/link';
 
 export default function SchoolPreview({
   previewImage,
@@ -13,11 +14,11 @@ export default function SchoolPreview({
   schoolId: string;
 }) {
   return (
-    <div className="flex w-full flex-col items-center gap-4 max-md:gap-4">
-      <div className="relative h-[360px] w-full max-md:h-[450px]">
+    <article className="flex w-full flex-col items-center gap-4 max-md:gap-4">
+      <Link href={`/portafolio/${schoolId}/${promId}`} className="relative h-[360px] w-full max-md:h-[450px]">
         <Image
           src={previewImage}
-          alt=""
+          alt={schoolId}
           fill
           sizes="
         (max-width: 768px) 100vw,
@@ -27,7 +28,7 @@ export default function SchoolPreview({
           className="rounded-xl object-cover"
           priority={false}
         />
-      </div>
+      </Link>
       <h1 className="font-garamond text-filmo-white text-4xl font-extrabold">
         {schoolId === 'interamerican'
           ? `Class of ${toRoman(Number(promId), schoolId)}`
@@ -38,6 +39,6 @@ export default function SchoolPreview({
         text="ver más"
         styles=""
       />
-    </div>
+    </article>
   );
 }

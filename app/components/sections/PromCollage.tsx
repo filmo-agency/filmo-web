@@ -60,7 +60,7 @@ function CollageImage({ pic }: { pic: StrapiImage }) {
     <div className='relative w-full overflow-hidden rounded-lg bg-neutral-200'>
       <Image
         src={pic.url}
-        alt=""
+        alt={pic.url}
         width={pic.width}
         height={pic.height}
         sizes="
@@ -95,7 +95,7 @@ export default function PromCollage({
   const mobileColumns = splitIntoColumns(shuffledPics, 2);
 
   return (
-    <div className="w-full flex flex-col items-center gap-16">
+    <section className="w-full flex flex-col items-center gap-16">
       <div
         className={[
           "w-full relative transition-all duration-500",
@@ -139,6 +139,6 @@ export default function PromCollage({
           Ver más
         </button>
       )}
-    </div>
+    </section>
   );
 }

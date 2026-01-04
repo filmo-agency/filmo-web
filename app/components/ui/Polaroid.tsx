@@ -6,7 +6,7 @@ export default function Polaroid({ img }: { img: string }) {
       <Image
         src={img}
         className="h-auto w-full will-change-transform"
-        alt=""
+        alt="Imagen Polaroid"
         style={{
           transform: 'translateZ(0)',
           imageRendering: '-webkit-optimize-contrast',

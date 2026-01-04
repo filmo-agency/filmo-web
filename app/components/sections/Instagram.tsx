@@ -36,7 +36,7 @@ export default function Instagram() {
   }, []);
 
   return (
-    <div className="bg-noise bg-filmo-black-100 z-10 flex w-full overflow-x-hidden py-32 pl-44 max-md:flex-col max-md:gap-12 max-md:py-12 max-md:px-0 max-[1400px]:pl-16">
+    <section className="bg-noise bg-filmo-black-100 z-10 flex w-full overflow-x-hidden py-32 pl-44 max-md:flex-col max-md:gap-12 max-md:py-12 max-md:px-0 max-[1400px]:pl-16">
       <div className="flex w-[40%] flex-col gap-16 max-md:w-full max-md:items-center max-md:gap-6 max-md:px-6">
         <div className="flex flex-col gap-2">
           <h1 className="font-figtree text-filmo-soft-white text-2xl font-medium uppercase max-md:text-center max-md:text-lg">
@@ -62,6 +62,6 @@ export default function Instagram() {
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 }

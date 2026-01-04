@@ -4,7 +4,7 @@ import ContactUsButton from '../ui/ContactUsButton';
 
 export default function CTA() {
   return (
-    <div
+    <section
       className="relative z-10 flex h-[500px] max-md:h-[500px] w-full flex-col items-center justify-center gap-10 max-md:px-8"
       id="cta"
     >
@@ -21,10 +21,10 @@ export default function CTA() {
 
       <Image
         src="/img/cta.webp"
-        alt=""
+        alt="CTA"
         className="absolute -z-10 h-full w-full mask-linear-to-gray-400 object-cover brightness-35"
         fill
       />
-    </div>
+    </section>
   );
 }
