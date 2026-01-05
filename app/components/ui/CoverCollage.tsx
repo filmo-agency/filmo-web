@@ -24,7 +24,7 @@ function CollageImage({ pic, delay }: { pic: Pic, delay: number }) {
     w-auto 
     max-md:h-48
     object-cover 
-    transition-opacity duration-0
+    transition-opacity duration-300
     ${isLoaded ? 'opacity-100' : 'opacity-0'}
   `;
 
@@ -89,7 +89,7 @@ export default function CoverCollage({ promPics }: CoverCollageProps) {
     return { ROWS, COLS, rows };
   }, [pics]); 
 
-  const BASE_DELAY_MS = 0; 
+  const BASE_DELAY_MS = 50; 
 
   return (
     <div className="flex h-full flex-col gap-4 max-md:gap-2 w-full -rotate-6 fixed z-0 opacity-10">

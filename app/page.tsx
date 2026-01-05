@@ -14,7 +14,7 @@ import { getStrapiData } from './lib/strapi';
 export const metadata: Metadata = {
   title: 'Filmo | Cobertura de fotos y videos para colegios',
   description:
-    'Cobertura profesional de fotos y videos para colegios y promociones estudiantiles.',
+    'Filmo ofrece cobertura profesional de fotos y videos para colegios y promociones estudiantiles en Ecuador.',
   alternates: { canonical: '/' },
 
   openGraph: {
@@ -68,7 +68,7 @@ export default async function Home() {
 
       <main className='bg-filmo-black-100 flex flex-col overflow-x-hidden'>
         <h1 className="sr-only">
-          Cobertura profesional de fotos y videos para colegios y promociones
+          Filmo, Cobertura profesional de fotos y videos para colegios y promociones
           estudiantiles en Ecuador
         </h1>
 
