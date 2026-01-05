@@ -34,7 +34,7 @@ export async function generateMetadata({
       url: `/portafolio/${slug}/${promId}`,
       images: [
         {
-          url: `/og/${promId}-${slug}.png`,
+          url: `/og/${slug}-${promId}.png`,
           width: 1200,
           height: 630,
         },
@@ -75,47 +75,6 @@ export async function generateStaticParams() {
 }
 
 export const dynamic = 'force-static';
-
-const schemaBreadcrumb = (school: string, slug: string, promLabel: string) => ({
-  '@context': 'https://schema.org',
-  '@type': 'BreadcrumbList',
-  itemListElement: [
-    {
-      '@type': 'ListItem',
-      position: 1,
-      name: 'Portafolio',
-      item: 'https://filmostudio.com/portafolio',
-    },
-    {
-      '@type': 'ListItem',
-      position: 2,
-      name: school,
-      item: `https://filmostudio.com/portafolio/${slug}`,
-    },
-    {
-      '@type': 'ListItem',
-      position: 3,
-      name: promLabel,
-    },
-  ],
-});
-
-const schemaProm = (
-  school: string,
-  promLabel: string,
-  slug: string,
-  promId: string
-) => ({
-  '@context': 'https://schema.org',
-  '@type': 'CreativeWork',
-  name: `${promLabel} - ${school}`,
-  description: `Cobertura audiovisual de la ${promLabel} del ${school}.`,
-  url: `https://filmostudio.com/portafolio/${slug}/${promId}`,
-  creator: {
-    '@type': 'Organization',
-    name: 'Filmo',
-  },
-});
 
 export default async function promPage({
   params,
@@ -190,7 +149,7 @@ export default async function promPage({
   return (
     <>
       <script
-        type="application/ld+json" dangerouslySetInnerHTML={{__html: JSON.stringify(schemaBreadcrumb)}}
+        type="application/ld+json"dangerouslySetInnerHTML={{__html: JSON.stringify(schemaBreadcrumb)}}
       />
 
       <script
