@@ -31,7 +31,7 @@ export async function generateMetadata({params}: {params: { slug: string } | Pro
       description:
         `Cobertura audiovisual del ${school}.`,
       url: `/portafolio/${slug}`,
-      images: ['/og/filmo-portfolio-og.png'],
+      images: ['/og/filmo-og.png'],
       type: 'article',
     },
   };
