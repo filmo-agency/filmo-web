@@ -25,10 +25,11 @@ export default function Instagram() {
   useEffect(() => {
     async function fetchPosts() {
       try {
-    const data = await getInstagramPosts<InstagramPost[]>();
-        if (data) setPosts(data);
+        const data = await getInstagramPosts<InstagramPost[]>();
+        setPosts(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Error loading Instagram posts:', error);
+        setPosts([]);
       }
     }
 
