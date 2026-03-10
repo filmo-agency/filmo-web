@@ -1,0 +1,16 @@
+---
+type Props = {
+  href: string;
+  text: string;
+  cls?: string;
+};
+
+const { href, text, cls } = Astro.props;
+---
+
+<a
+  href={href}
+  class={`text-white w-fit font-bold uppercase font-figtree border-b-2 border-filmo-yellow-100 ${cls || ''}`}
+>
+  {text}
+</a>

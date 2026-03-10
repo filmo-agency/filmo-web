@@ -1,0 +1,28 @@
+---
+interface Props {
+  as?: keyof HTMLElementTagNameMap;
+  class?: string;
+  contentClass?: string;
+  grainClass?: string;
+}
+
+const {
+  as: Tag = 'section',
+  class: sectionClass = '',
+  contentClass = '',
+  grainClass = '',
+} = Astro.props as Props;
+
+const rootClasses = ['relative isolate bg-filmo-black-100', sectionClass]
+  .filter(Boolean)
+  .join(' ');
+const overlayClasses = ['grain-overlay', grainClass].filter(Boolean).join(' ');
+const contentClasses = ['relative z-10', contentClass].filter(Boolean).join(' ');
+---
+
+<Tag class={rootClasses}>
+  <div class={overlayClasses} aria-hidden="true"></div>
+  <div class={contentClasses}>
+    <slot />
+  </div>
+</Tag>

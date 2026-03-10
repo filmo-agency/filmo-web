@@ -1,0 +1,94 @@
+---
+import '@/styles/global.css';
+import Navbar from '@/components/ui/Navbar.astro';
+import Footer from '@/components/ui/Footer.astro';
+import { normalizeCanonicalPath, toAbsoluteUrl } from '@/components/lib/seo';
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonicalPath?: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  noindex?: boolean;
+  keywords?: string[];
+  jsonLd?: Record<string, unknown> | Array<Record<string, unknown>>;
+}
+
+const DEFAULT_DESCRIPTION =
+  'Cobertura profesional de fotos y videos para colegios y promociones estudiantiles en Ecuador.';
+const DEFAULT_OG_IMAGE = '/og/filmo-og.png';
+const DEFAULT_KEYWORDS = [
+  'filmo',
+  'fotografia escolar',
+  'video escolar',
+  'promociones estudiantiles',
+  'fotografia para colegios',
+  'cobertura audiovisual ecuador',
+];
+
+const {
+  title = 'Filmo',
+  description = DEFAULT_DESCRIPTION,
+  canonicalPath = Astro.url.pathname,
+  ogImage = DEFAULT_OG_IMAGE,
+  ogType = 'website',
+  noindex = false,
+  keywords = DEFAULT_KEYWORDS,
+  jsonLd,
+} = Astro.props as Props;
+
+const canonical = normalizeCanonicalPath(canonicalPath);
+const canonicalUrl = toAbsoluteUrl(canonical);
+const ogImageUrl = toAbsoluteUrl(ogImage);
+const robots = noindex ? 'noindex, nofollow' : 'index, follow';
+const jsonLdBlocks = Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [];
+---
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/svg/filmo.svg" />
+    <link rel="icon" href="/favicon-48.png" />
+    <link rel="preload" as="image" href="/svg/filmo.svg" type="image/svg+xml" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <meta name="robots" content={robots} />
+    <meta name="googlebot" content={robots} />
+    <meta name="author" content="Filmo" />
+    <meta name="keywords" content={keywords.join(', ')} />
+    <meta name="theme-color" content="#151210" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="alternate" hrefLang="es-EC" href={canonicalUrl} />
+    <link rel="alternate" hrefLang="x-default" href={canonicalUrl} />
+
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Filmo" />
+    <meta property="og:locale" content="es_EC" />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:alt" content={title} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <title>{title}</title>
+    {
+      jsonLdBlocks.map((schema) => (
+        <script
+          type="application/ld+json"
+          set:html={JSON.stringify(schema)}
+        />
+      ))
+    }
+  </head>
+  <body>
+    <Navbar />
+    <main><slot /></main>
+    <Footer />
+  </body>
+</html>

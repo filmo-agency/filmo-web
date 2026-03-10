@@ -1,0 +1,111 @@
+---
+import type { StrapiImage } from '@/components/lib/types';
+
+interface Props {
+  promPics: StrapiImage[];
+  rows?: number;
+  columns?: number;
+  seed?: string | number;
+}
+
+const {
+  promPics = [],
+  rows = 3,
+  columns = 6,
+  seed = '',
+} = Astro.props as Props;
+
+const total = rows * columns;
+
+const stringToSeed = (value: string | number): number => {
+  const input = String(value);
+  let hash = 1779033703 ^ input.length;
+
+  for (let index = 0; index < input.length; index += 1) {
+    hash = Math.imul(hash ^ input.charCodeAt(index), 3432918353);
+    hash = (hash << 13) | (hash >>> 19);
+  }
+
+  return (hash >>> 0) || 1;
+};
+
+const createRng = (initialSeed: number) => {
+  let current = initialSeed;
+  return () => {
+    current |= 0;
+    current = (current + 0x6d2b79f5) | 0;
+    let t = Math.imul(current ^ (current >>> 15), 1 | current);
+    t ^= t + Math.imul(t ^ (t >>> 7), 61 | t);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+};
+
+const shuffleDeterministic = <T,>(items: T[], seedValue: string | number): T[] => {
+  const shuffled = [...items];
+  const random = createRng(stringToSeed(seedValue));
+
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(random() * (index + 1));
+    [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+  }
+
+  return shuffled;
+};
+
+const basePool = promPics.length > 0
+  ? shuffleDeterministic(promPics, `${seed}-${promPics.length}-${total}`)
+  : [];
+
+const collagePool: StrapiImage[] = [];
+
+if (basePool.length > 0) {
+  while (collagePool.length < total) {
+    collagePool.push(...basePool);
+  }
+}
+
+const slicedPool = collagePool.slice(0, total);
+
+const collageRows = Array.from({ length: rows }, (_, rowIndex) => {
+  const start = rowIndex * columns;
+  return slicedPool.slice(start, start + columns);
+});
+---
+
+{
+  collageRows.length > 0 && (
+    <div
+      class="pointer-events-none absolute -inset-y-16 -inset-x-36 -z-20 flex scale-[1.12] -rotate-12 flex-col gap-3 overflow-hidden opacity-14 md:-inset-y-20 md:-inset-x-48 md:gap-4"
+      aria-hidden="true"
+    >
+      {collageRows.map((row, rowIndex) => (
+        <div
+          class:list={[
+            'flex min-w-max items-center justify-center gap-3 md:gap-4',
+            rowIndex % 2 !== 0 && 'translate-x-12 md:translate-x-18',
+          ]}
+        >
+          {row.map((pic, columnIndex) => {
+            const imageSrc = pic.optimizedUrl || pic.url;
+            const imageAlt = `Foto de promoción ${rowIndex * columns + columnIndex + 1}`;
+            const isPriorityImage = rowIndex === 0 && columnIndex < 2;
+
+            return (
+              <img
+                src={imageSrc}
+                alt={imageAlt}
+                loading={isPriorityImage ? 'eager' : 'lazy'}
+                fetchpriority={isPriorityImage ? 'high' : 'low'}
+                decoding="async"
+                width={pic.width}
+                height={pic.height}
+                class="h-33 w-auto shrink-0 rounded-xl bg-white/5 object-cover md:h-80"
+                draggable="false"
+              />
+            );
+          })}
+        </div>
+      ))}
+    </div>
+  )
+}

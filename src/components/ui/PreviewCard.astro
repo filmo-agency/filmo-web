@@ -1,0 +1,176 @@
+---
+import type { PromPreviewCard, SchoolPreview } from '../lib/types';
+import UnderlinedButton from './UnderlinedButton.astro';
+import { toRoman } from '../lib/strapi';
+
+type Props =
+  | { type: 'school'; item: SchoolPreview }
+  | { type: 'prom'; item: PromPreviewCard };
+
+const props = Astro.props as Props;
+
+const type = props.type;
+
+const isSchoolPreview = type === 'school';
+
+const promText =
+  type === 'prom'
+    ? props.item.id > 2000
+      ? `Class of ${props.item.id}`
+      : `Promoción ${toRoman(props.item.id)}`
+    : '';
+
+const promHref =
+  type === 'prom' ? `/portafolio/${props.item.schoolSlug}/${props.item.id}` : '';
+---
+
+<article class="group w-full flex flex-col items-center gap-3" data-hover-card>
+  {
+    isSchoolPreview ? (
+      <>
+        <a class="order-1 lg:order-2" href={`/portafolio/${props.item.id}`}>
+          <video
+            class="aspect-4/3 h-full object-cover sm:aspect-video rounded-xl grayscale transition duration-300 group-hover:grayscale-0 in-[.is-active]:grayscale-0 in-[.is-ipad-pro]:grayscale-0"
+            src={props.item.cover}
+            muted
+            loop
+            playsinline
+            preload="metadata"
+            data-hover-video
+          />
+        </a>
+        <h2 class="order-2 lg:order-1 text-pretty text-center text-3xl">
+          {props.item.name}
+        </h2>
+        <img
+          class="order-3 max-md:hidden mt-2 h-14 transition duration-300 opacity-70 filter-[brightness(0)_invert(95%)] group-hover:opacity-100 group-hover:filter-none in-[.is-active]:opacity-100 in-[.is-active]:filter-none in-[.is-ipad-pro]:opacity-100 in-[.is-ipad-pro]:filter-none"
+          src={props.item.logo}
+          alt={props.item.name}
+          loading="lazy"
+          fetchpriority="low"
+          decoding="async"
+        />
+        <UnderlinedButton
+          cls="order-4"
+          text="ver más"
+          href={`/portafolio/${props.item.id}`}
+        />
+      </>
+    ) : (
+      <>
+        <a href={promHref}>
+          <img
+            class="aspect-video object-cover object-top rounded-lg"
+            src={props.item.cover}
+            alt={`Prom ${props.item.id}`}
+            loading="lazy"
+            fetchpriority="low"
+            decoding="async"
+          />
+        </a>
+
+        <h2 class="text-balance lg:text-pretty text-center text-4xl">
+          {promText}
+        </h2>
+
+        <UnderlinedButton
+          text="ver más"
+          href={promHref}
+        />
+      </>
+    )
+  }
+</article>
+
+<script>
+  const cards = document.querySelectorAll('[data-hover-card]');
+  const mobileQuery = window.matchMedia('(max-width: 600px)');
+  const ipadProQuery = window.matchMedia(
+    '(min-width: 1024px) and (max-width: 1366px) and (hover: none) and (pointer: coarse)',
+  );
+  let mobileObserver: IntersectionObserver | undefined;
+
+  cards.forEach((card) => {
+    if (card instanceof HTMLElement && card.dataset.hoverBound === 'true')
+      return;
+    if (card instanceof HTMLElement) card.dataset.hoverBound = 'true';
+
+    const video = card.querySelector('[data-hover-video]');
+    if (!(video instanceof HTMLVideoElement)) return;
+
+    const stopVideo = () => {
+      video.pause();
+    };
+
+    card.addEventListener('mouseenter', () => {
+      if (ipadProQuery.matches) return;
+      video.play().catch(() => {});
+    });
+
+    card.addEventListener('mouseleave', stopVideo);
+    card.addEventListener('focusout', stopVideo);
+  });
+
+  const setupMobileObserver = () => {
+    if (!(mobileQuery.matches && 'IntersectionObserver' in window)) {
+      if (mobileObserver) {
+        mobileObserver.disconnect();
+        mobileObserver = undefined;
+      }
+
+      cards.forEach((card) => {
+        if (!(card instanceof HTMLElement)) return;
+        card.classList.remove('is-active');
+      });
+      return;
+    }
+
+    mobileObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const card = entry.target;
+          if (!(card instanceof HTMLElement)) return;
+
+          const video = card.querySelector('[data-hover-video]');
+          if (!(video instanceof HTMLVideoElement)) return;
+
+          if (entry.isIntersecting) {
+            card.classList.add('is-active');
+            video.play().catch(() => {});
+            return;
+          }
+
+          card.classList.remove('is-active');
+          video.pause();
+        });
+      },
+      { threshold: 0.6 },
+    );
+
+    cards.forEach((card) => {
+      if (!(card instanceof HTMLElement)) return;
+      mobileObserver?.observe(card);
+    });
+  };
+
+  const setupIpadProState = () => {
+    cards.forEach((card) => {
+      if (!(card instanceof HTMLElement)) return;
+      const video = card.querySelector('[data-hover-video]');
+      if (!(video instanceof HTMLVideoElement)) return;
+
+      if (ipadProQuery.matches) {
+        card.classList.add('is-ipad-pro');
+        video.pause();
+        return;
+      }
+
+      card.classList.remove('is-ipad-pro');
+    });
+  };
+
+  setupMobileObserver();
+  setupIpadProState();
+  mobileQuery.addEventListener('change', setupMobileObserver);
+  ipadProQuery.addEventListener('change', setupIpadProState);
+</script>

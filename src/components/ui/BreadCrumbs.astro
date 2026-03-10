@@ -1,0 +1,50 @@
+---
+type Crumb = {
+  label: string;
+  href?: string;
+};
+
+const { items = [] } = Astro.props as {
+  items: Crumb[];
+};
+---
+
+{
+  items.length > 0 && (
+    <nav aria-label="Breadcrumb" class="w-fit overflow-hidden">
+      <ol class="flex w-full min-w-0 items-center">
+        {items.map((item, index) => {
+          const isLast = index == items.length - 1;
+
+          return (
+            <li
+              class:list={[
+                'flex items-center',
+                isLast ? 'min-w-0 flex-1 overflow-hidden' : 'shrink-0',
+              ]}
+            >
+              {isLast || !item.href ? (
+                <span
+                  class={`font-bold text-filmo-yellow-100 block min-w-0 ${isLast ? 'w-full overflow-hidden' : ''}`}
+                  aria-current={isLast ? 'page' : undefined}
+                >
+                  <span class="block w-full truncate whitespace-nowrap capitalize [text-shadow:0_0_0.45rem_rgba(254,197,38,0.5)]">
+                    {item.label}
+                  </span>
+                </span>
+              ) : (
+                <a
+                  href={item.href}
+                  class={`inline-block whitespace-nowrap underline-offset-4 transition-all duration-150 hover:underline font-medium text-white/90 hover:text-white`}
+                >
+                  {item.label}
+                </a>
+              )}
+              {!isLast && <span class={'text-white/90 mx-4 shrink-0'}>|</span>}
+            </li>
+          );
+        })}
+      </ol>
+    </nav>
+  )
+}

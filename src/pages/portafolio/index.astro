@@ -1,0 +1,134 @@
+---
+import BaseLayout from '@/components/layouts/BaseLayout.astro';
+import { getStrapiData } from '@/components/lib/strapi';
+import type { PortfolioResponse } from '@/components/lib/types';
+import UnderlinedButton from '@/components/ui/UnderlinedButton.astro';
+import Polaroid from '@/components/ui/Polaroid.astro';
+import PreviewCard from '@/components/ui/PreviewCard.astro';
+import CTA from '@/components/sections/CTA.astro';
+import IG from '@/components/sections/IG.astro';
+import GrainSection from '@/components/layouts/GrainSection.astro';
+import { toAbsoluteUrl } from '@/components/lib/seo';
+
+let schools: PortfolioResponse['schools'] = [];
+
+try {
+  const data = await getStrapiData<PortfolioResponse>('/api/portfolio');
+  schools = [...data.schools].sort((a, b) => a.priority - b.priority);
+} catch (error) {
+  console.error('Failed to load portfolio data:', error);
+}
+
+const leftSchools = schools.filter((_, index) => index % 2 === 0);
+const rightSchools = schools.filter((_, index) => index % 2 !== 0);
+
+const pageTitle = 'Portafolio | Filmo';
+const pageDescription =
+  'Conoce las coberturas audiovisuales realizadas por Filmo en distintos colegios.';
+const schemaPortfolio = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: pageTitle,
+  url: toAbsoluteUrl('/portafolio'),
+  description: pageDescription,
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonicalPath="/portafolio"
+  ogImage="/og/filmo-portfolio-og.png"
+  jsonLd={schemaPortfolio}
+>
+  <section class="relative h-125 lg:min-h-[85vh] overflow-clip">
+    <video
+      src="/video/hero.mp4"
+      class="hero-media brightness-50 md:brightness-90"
+      autoplay
+      muted
+      loop
+      playsinline></video>
+
+    <div
+      class="pointer-events-none absolute inset-0 -z-10 hero-overlay-gradient"
+      aria-hidden="true"
+    >
+    </div>
+
+    <div class="hero-overlay-soft" aria-hidden="true"></div>
+
+    <div
+      class="site-container relative z-10 flex h-125 lg:min-h-[85vh] lg:pb-32 items-end justify-center"
+    >
+      <div
+        class="text-left flex flex-col gap-3 lg:gap-8 items-left justify-start w-full"
+      >
+        <h1 class="text-5xl lg:text-8xl">
+          <span class="block">Nuestro</span>
+          <span class="block">Portafolio</span>
+        </h1>
+        <p class="text-lg font-medium">
+          <span class="lg:block">Lo vivimos con ellos y nosotros</span>
+          <span class="lg:block">lo guardamos para siempre.</span>
+        </p>
+        <UnderlinedButton href="#Work" text="Conoce nuestro trabajo" />
+      </div>
+    </div>
+  </section>
+  <GrainSection>
+    <div class="site-container">
+      <div class="flex lg:flex-row flex-col-reverse items-center gap-16 lg:justify-center lg:gap-32">
+        <Polaroid img="/img/polaroid.webp" cls="-rotate-4 lg:-rotate-8 lg:w-130 w-80" />
+        <div class="flex flex-col items-center gap-9 lg:mt-16">
+          <div class="flex flex-col gap-3 items-center">
+            <span class="text-sm lg:text-base text-filmo-gray uppercase font-medium"
+              >Somos filmo</span
+            >
+            <h2 class="text-4xl lg:text-6xl text-center">
+              <span class="lg:block">Estamos donde</span>
+              <span class="lg:block">las historias se viven</span>
+              <span class="lg:block">fuerte: en la cancha, en</span>
+              <span class="lg:block">el aula, en los abrazos</span>
+              <span class="lg:block">de despedida.</span>
+            </h2>
+          </div>
+
+          <UnderlinedButton text="contáctanos" href="/" />
+        </div>
+      </div>
+    </div>
+  </GrainSection>
+  <GrainSection>
+    <div class="site-container pb-32 lg:pb-52 flex flex-col gap-5">
+      <div class="flex flex-col items-center gap-12 lg:gap-24">
+        <div class="flex flex-col gap-3 items-center">
+          <span class="text-filmo-gray uppercase font-medium" id="Work">Colegios</span>
+          <h2 class="text-4xl lg:text-6xl text-center">
+            <span class="lg:block">Cada colegio, una</span>
+            <span class="lg:block">historia distinta</span>
+          </h2>
+        </div>
+        <div class="grid grid-cols-1 gap-24 lg:grid-cols-2">
+          <div class="flex flex-col gap-24">
+            {
+              leftSchools.map((s) => (
+                <PreviewCard type="school" item={s} />
+              ))
+            }
+          </div>
+          <div class="flex flex-col gap-24 lg:translate-y-12">
+            {
+              rightSchools.map((s) => (
+                <PreviewCard type="school" item={s} />
+              ))
+            }
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </GrainSection>
+  <CTA />
+  <IG />
+</BaseLayout>

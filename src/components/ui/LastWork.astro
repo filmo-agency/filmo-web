@@ -1,0 +1,35 @@
+---
+import UnderlinedButton from './UnderlinedButton.astro';
+
+type Props = {
+  school: string;
+  img: string;
+  prom: number;
+  slug: string;
+}
+
+const { school, img, prom, slug } = Astro.props;
+
+const kickerProm =
+  prom > 2000
+  ? `Class of ${prom}`
+  : `Prom ${prom}`
+
+---
+<article class="flex flex-col items-center lg:items-start gap-1">
+  <img
+    src={img}
+    alt={school}
+    class="rounded-xl w-full"
+    loading="lazy"
+    fetchpriority="low"
+    decoding="async"
+  />
+  <div class="flex flex-col gap-3 items-center lg:items-start">
+    <div class="flex flex-col items-center text-center lg:text-left lg:items-start gap-2">
+      <h3 class="text-balance lg:text-pretty text-3xl">{school}</h3>
+      <p class="font-medium text-xs text-white uppercase">{kickerProm}</p>
+    </div>
+    <UnderlinedButton href={`/portafolio/${slug}`} cls='text-sm' text="ver más" />
+  </div>
+</article>

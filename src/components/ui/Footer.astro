@@ -1,0 +1,53 @@
+---
+import GrainSection from '../layouts/GrainSection.astro';
+---
+
+<GrainSection as="footer" contentClass="w-full h-fit">
+  <div class="site-container pt-20 flex flex-col items-center gap-10">
+    <div class="w-full flex flex-col items-center gap-10">
+      <img
+        src="/svg/filmo.svg"
+        class="drop-shadow-logo h-16 w-auto lg:mr-2"
+        alt="Filmo"
+        loading="lazy"
+        fetchpriority="low"
+        decoding="async"
+      />
+      <p
+        class="text-white font-figtree leading-[150%] text-balance lg:max-w-6/12 text-center"
+      >
+        <span class="lg:block"
+          >Nos metemos en el ritmo, en la emoción y en el</span
+        >
+        <span class="lg:block"
+          >caos lindo que es cada evento escolar. Estamos atentos</span
+        >
+        <span class="lg:block"> para capturar lo que de verdad importa.</span>
+      </p>
+      <span class="text-filmo-gray text-sm font-semibold"
+        >Filmo © 2025. Todos los derechos reservados</span
+      >
+    </div>
+    <div class="flex flex-col lg:flex-row items-center gap-4">
+      <div class="flex items-center gap-1">
+        <span class="text-filmo-gray text-sm font-semibold">Web by</span>
+        <a
+          href="dsebastiansr.github.io"
+          target="_blank"
+          class="text-white/80 hover:text-white transtion-all duration-200 underline underline-offset-4 font-medium text-underline text-sm"
+          >David Sánchez</a
+        >
+      </div>
+      <span class="text-filmo-gray hidden lg:block">|</span>
+      <div class="flex items-center gap-1">
+        <span class="text-filmo-gray text-sm font-semibold">Design by</span>
+        <a
+          href=""
+          target="_blank"
+          class="text-white/80 hover:text-white transtion-all duration-200 underline underline-offset-4 font-medium text-underline text-sm"
+          >Alejandro Alvarado</a
+        >
+      </div>
+    </div>
+  </div>
+</GrainSection>

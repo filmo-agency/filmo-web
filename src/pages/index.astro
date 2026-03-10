@@ -1,0 +1,335 @@
+---
+import BaseLayout from '@/components/layouts/BaseLayout.astro';
+import GrainSection from '@/components/layouts/GrainSection.astro';
+import { getStrapiData } from '@/components/lib/strapi';
+import type { HomeSchool, LandingHomeResponse } from '@/components/lib/types';
+import LastWork from '@/components/ui/LastWork.astro';
+import UnderlinedButton from '@/components/ui/UnderlinedButton.astro';
+import YellowButton from '@/components/ui/YellowButton.astro';
+import CTA from '@/components/sections/CTA.astro';
+import IG from '@/components/sections/IG.astro';
+import { toAbsoluteUrl } from '@/components/lib/seo';
+
+let schools: LandingHomeResponse['schools'] = [];
+
+try {
+  const data = await getStrapiData<LandingHomeResponse>('/api/landing/home');
+  schools = data.schools;
+} catch (error) {
+  console.error('Failed to load landing home data:', error);
+}
+
+const MAX_LAST_WORKS = 3;
+
+const isAmericanoSchool = (school: HomeSchool) => {
+  const normalizedValues = `${school.slug} ${school.name}`.toLowerCase();
+  return normalizedValues.includes('americano');
+};
+
+const sortedSchools = [...schools].sort((a, b) => b.prom.id - a.prom.id);
+const americanoSchool = sortedSchools.find(isAmericanoSchool);
+
+let latestWorks = sortedSchools.slice(0, MAX_LAST_WORKS);
+
+if (
+  americanoSchool &&
+  !latestWorks.some((school) => school.slug === americanoSchool.slug)
+) {
+  latestWorks = [
+    ...latestWorks.slice(0, MAX_LAST_WORKS - 1),
+    americanoSchool,
+  ].sort((a, b) => b.prom.id - a.prom.id);
+}
+
+const pageTitle = 'Filmo | Cobertura de fotos y videos para colegios';
+const pageDescription =
+  'Filmo ofrece cobertura profesional de fotos y videos para colegios y promociones estudiantiles en Ecuador.';
+
+const schemaHome = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Filmo',
+  url: toAbsoluteUrl('/'),
+  logo: toAbsoluteUrl('/og/filmo-og.png'),
+  description: pageDescription,
+  sameAs: ['https://www.instagram.com/filmo.inc'],
+};
+
+const schemaWebsite = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Filmo',
+  url: toAbsoluteUrl('/'),
+  inLanguage: 'es-EC',
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonicalPath="/"
+  ogImage="/og/filmo-og.png"
+  jsonLd={[schemaHome, schemaWebsite]}
+>
+  <section class="relative min-h-[84vh] overflow-clip">
+    <video
+      class="hero-media brightness-50 md:brightness-90"
+      autoplay
+      muted
+      loop
+      preload="metadata"
+      poster="/img/hero-poster.webp"
+      playsinline>
+        <source src="/video/hero.webm" type="video/webm">
+        <source src="/video/hero.mp4" type="video/mp4">
+    </video>
+
+    <div
+      class="pointer-events-none absolute inset-0 -z-10 hero-overlay-gradient"
+      aria-hidden="true"
+    >
+    </div>
+
+    <div class="hero-overlay-soft" aria-hidden="true"></div>
+
+    <div
+      class="site-container relative z-10 flex min-h-[83vh] pb-24 items-end justify-center"
+    >
+      <div
+        class="text-center flex flex-col gap-8 items-center justify-center w-full lg:max-w-10/12"
+      >
+        <h1 class="text-balance lg:text-pretty text-6xl md:text-8xl">
+          <span class="lg:block">Especialistas en</span>
+          <span class="lg:block">capturar historias únicas</span>
+        </h1>
+        <p class="max-w-3/4 md:text-xl font-figtree font-medium md:max-w-5/12">
+          Cada sonrisa, abrazo y logro merece ser eterno. Déjanos contar tu
+          historia en imágenes.
+        </p>
+        <YellowButton href="/portafolio" text="Conoce nuestro trabajo" />
+      </div>
+    </div>
+  </section>
+  <GrainSection>
+    <div class="site-container flex flex-col items-center gap-10">
+      <h2 class="text-lg text-filmo-gray font-figtree font-medium uppercase">
+        Hemos trabajado con
+      </h2>
+      <div
+        class="grid grid-cols-1 md:grid-cols-4 gap-16 lg:gap-8 items-center justify-items-center"
+      >
+        <img
+          class="filter-[brightness(0)_invert(95%)] h-14 w-auto opacity-50 order-2 lg:order-1"
+          src="/img/americano.png"
+          alt="Americano"
+          loading="lazy"
+          fetchpriority="low"
+          decoding="async"
+        />
+        <img
+          class="filter-[brightness(0)_invert(95%)] h-18 w-auto opacity-50 order-1 lg:order-2"
+          src="/img/interamerican.png"
+          alt="Interamerican"
+          loading="lazy"
+          fetchpriority="low"
+          decoding="async"
+        />
+        <img
+          class="filter-[brightness(0)_invert(95%)] h-10 w-auto opacity-50 order-3"
+          src="/img/copol.png"
+          alt="Copol"
+          loading="lazy"
+          fetchpriority="low"
+          decoding="async"
+        />
+        <img
+          class="filter-[brightness(0)_invert(95%)] h-12 w-auto opacity-50 order-4"
+          src="/img/montessori.png"
+          alt="Montessori"
+          loading="lazy"
+          fetchpriority="low"
+          decoding="async"
+        />
+      </div>
+    </div>
+  </GrainSection>
+  <GrainSection>
+    <div class="hidden sm:flex site-container flex-row">
+      <div class="w-7/12 flex flex-col items-start gap-24">
+        <div class="w-6/7 flex flex-col gap-24">
+          <div class="flex flex-col items-center text-center gap-9">
+            <div class="flex flex-col gap-3 items-center">
+              <span class="text-filmo-gray uppercase font-medium"
+                >Como si fuera ese día otra vez</span
+              >
+              <h2 class="text-5xl text-center text-pretty">
+                <span class="block">Cobertura audiovisual para</span>
+                <span class="block">esos momentos estudiantiles</span>
+                <span class="block">que no se repiten.</span>
+              </h2>
+            </div>
+            <UnderlinedButton href="/portafolio" text="conoce más" />
+          </div>
+          <img
+            src="/img/about2.webp"
+            class="w-full aspect-video rounded-xl object-cover"
+            alt=""
+            loading="lazy"
+            fetchpriority="low"
+            decoding="async"
+          />
+        </div>
+        <div class="w-6/7 self-end flex flex-col gap-10">
+          <img
+            src="/img/f4.png"
+            class="rounded-t-full"
+            alt=""
+            loading="lazy"
+            fetchpriority="low"
+            decoding="async"
+          />
+        </div>
+      </div>
+      <div class="w-5/12 flex flex-col gap-32">
+        <div class="w-auto flex flex-col gap-9">
+          <div class="w-4/5 self-start">
+            <img
+              src="/img/about1.webp"
+              class="w-full rounded-xl"
+              alt=""
+              loading="lazy"
+              fetchpriority="low"
+              decoding="async"
+            />
+          </div>
+          <div class="w-full flex flex-col gap-6">
+            <h2 class="text-5xl uppercase leading-[100%] text-right">
+              <span class="2xl:block">Vives y disfrutas al</span>
+              <span class="2xl:block">máximo, se nota en</span>
+              <span class="2xl:block">cada momento.</span>
+            </h2>
+            <p class="self-end text-pretty text-right font-medium text-white">
+              <span class=lg:block"
+                >Cuando celebras tu graduación, compartes risas y buenas vibras</span
+              >
+              <span class=lg:block">
+                en tu fiesta, lo que importa son las experiencias que creas</span
+              >
+              <span class=lg:block">
+                con las personas que hacen que tu historia sea especial.</span
+              >
+            </p>
+            <UnderlinedButton
+              href="#lastWork"
+              text="Nuestro último trabajo"
+              cls="w-fit self-end"
+            />
+          </div>
+        </div>
+        <img
+          src="/img/about5.webp"
+          class="w-4/5 self-end rounded-xl"
+          alt=""
+          loading="lazy"
+          fetchpriority="low"
+          decoding="async"
+        />
+      </div>
+    </div>
+
+    <div class="pt-5 pb-10 flex sm:hidden site-container flex-col gap-2">
+      <div class="w-full translate-y-10 flex flex-col items-start text-left gap-6">
+        <div class="flex flex-col gap-3 items-start">
+          <span class="text-filmo-gray text-sm uppercase font-medium"
+            >Como si fuera ese día otra vez</span
+          >
+          <h2 class="text-4xl text-balance text-left leading-[100%]">
+            <span class="">Cobertura audiovisual </span>
+            <span class="">para esos momentos </span>
+            <span class="">estudiantiles que no se repiten.</span>
+          </h2>
+        </div>
+        <UnderlinedButton href="/portafolio" text="conoce más" />
+      </div>
+      <div class="mt-3 mb-5 flex items-center overflow-x-auto gap-4 pb-3">
+        <img
+          class="h-auto w-70 object-cover rounded-xl"
+          src="/img/about2.webp"
+          alt=""
+          loading="lazy"
+          fetchpriority="low"
+          decoding="async"
+        />
+        <img
+          class="h-auto w-50 object-cover rounded-xl"
+          src="/img/about1.webp"
+          alt=""
+          loading="lazy"
+          fetchpriority="low"
+          decoding="async"
+        />
+      </div>
+      <div class="mb-8 w-full flex flex-col gap-6">
+        <div class="flex flex-col items-end gap-2">
+          <h2 class="text-3xl uppercase text-right">
+            <span class="">Vives y disfrutas al</span>
+            <span class="">máximo, se nota en</span>
+            <span class="">cada momento.</span>
+          </h2>
+          <p class="self-end w-[95%] text-balance text-right font-thin text-white">
+            Cuando celebras tu graduación, compartes risas y buenas vibras
+            en tu fiesta, lo que importa son las experiencias que celebras
+            con las personas que hacen que tu historia sea especial.
+          </p>
+        </div>
+
+        <UnderlinedButton
+          href="#lastWork"
+          text="Nuestro último trabajo"
+          cls="w-fit self-end"
+        />
+      </div>
+      <img
+        src="/img/about5.webp"
+        class="rounded-xl"
+        alt=""
+        loading="lazy"
+        fetchpriority="low"
+        decoding="async"
+      >
+    </div>
+  </GrainSection>
+  <GrainSection>
+    <div class="site-container flex flex-col items-center gap-12" id="lastWork">
+      <div class="flex flex-col gap-12 items-center">
+        <h2 class="text-7xl lg:w-4/11 lg:text-8xl leading-[80%] flex flex-col">
+          <span>Nuestro</span>
+          <span class="ml-10">Portafolio</span>
+        </h2>
+        <div class="w-full">
+          {
+            latestWorks.length > 0 ? (
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-8">
+                {latestWorks.map((school) => (
+                  <LastWork
+                    school={school.name}
+                    img={school.prom.cover}
+                    prom={school.prom.id}
+                    slug={`${school.slug}/${school.prom.id}`}
+                  />
+                ))}
+              </div>
+            ) : (
+              <p class="text-center text-filmo-gray">
+                No hay trabajos recientes disponibles.
+              </p>
+            )
+          }
+        </div>
+      </div>
+      <YellowButton href="/portafolio" text="Ver todo nuestro trabajo" />
+    </div>
+  </GrainSection>
+  <CTA />
+  <IG />
+</BaseLayout>

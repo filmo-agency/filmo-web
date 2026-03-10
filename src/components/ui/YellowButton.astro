@@ -1,0 +1,63 @@
+---
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+type Props = {
+  href: string;
+  text: string;
+  cls?: string;
+  blank?: boolean;
+  ig?: boolean;
+  ws?: boolean;
+  iconSize?: number | string;
+  dropShadow?: boolean;
+};
+
+const IG_ICON = readFileSync(
+  join(process.cwd(), 'public', 'svg', 'ig.svg'),
+  'utf-8'
+).trim();
+const WS_ICON = readFileSync(
+  join(process.cwd(), 'public', 'svg', 'ws.svg'),
+  'utf-8'
+).trim();
+
+const {
+  href,
+  text,
+  cls = '',
+  blank = false,
+  ig = false,
+  ws = false,
+  iconSize = 20,
+  dropShadow = true,
+} = Astro.props as Props;
+const iconSvg = ig ? IG_ICON : ws ? WS_ICON : '';
+const iconSizeValue =
+  typeof iconSize === 'number' ? `${iconSize}px` : iconSize;
+
+const drop = dropShadow ? ' drop-shadow-button' : ' '
+
+
+---
+<a
+  href={href}
+  target={blank ? '_blank' : undefined}
+  rel={blank ? 'noopener noreferrer' : undefined}
+  class={[
+    'hover:scale-[1.03] transition-all duration-250 inline-flex items-center gap-2 bg-filmo-yellow-100 px-6 py-3 text-filmo-black-100 uppercase font-bold rounded-full shrink-0',
+    cls, drop
+  ]
+    .filter(Boolean)
+    .join(' ')}
+>
+  {iconSvg && (
+    <span
+      class="inline-flex [&_svg]:block [&_svg]:size-(--icon-size)"
+      style={`--icon-size:${iconSizeValue};`}
+      set:html={iconSvg}
+      aria-hidden="true"
+    ></span>
+  )}
+  {text}
+</a>

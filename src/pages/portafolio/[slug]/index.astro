@@ -1,0 +1,144 @@
+---
+import BaseLayout from '@/components/layouts/BaseLayout.astro';
+import { getStrapiData } from '@/components/lib/strapi';
+import type { SchoolDetail, SchoolSlug } from '@/components/lib/types';
+import UnderlinedButton from '@/components/ui/UnderlinedButton.astro';
+import BreadCrumbs from '@/components/ui/BreadCrumbs.astro';
+import PreviewCard from '@/components/ui/PreviewCard.astro';
+import CTA from '@/components/sections/CTA.astro';
+import GrainSection from '@/components/layouts/GrainSection.astro';
+import IG from '@/components/sections/IG.astro';
+import { toAbsoluteUrl } from '@/components/lib/seo';
+
+interface Params {
+  slug: string;
+}
+
+export async function getStaticPaths() {
+  try {
+    const schools = await getStrapiData<SchoolSlug[]>('/api/schools/slugs');
+
+    return schools.map((school) => ({
+      params: { slug: school.slug },
+    }));
+  } catch (error) {
+    console.error('Failed to build static paths for school page:', error);
+    return [];
+  }
+}
+
+const { slug } = Astro.params as Params;
+
+let school: SchoolDetail | null = null;
+
+try {
+  school = await getStrapiData<SchoolDetail>(`/api/schools/${slug}`);
+} catch (error) {
+  console.error(`Failed to load school data for ${slug}:`, error);
+}
+
+if (!school) {
+  throw new Error(`School not found for slug: ${slug}`);
+}
+
+const crumbs = [
+  { label: 'Portafolio', href: '/portafolio' },
+  { label: school.id },
+];
+
+const pageTitle = `${school.name} | Filmo`;
+const pageDescription = `Cobertura audiovisual realizada para ${school.name}.`;
+const canonicalPath = `/portafolio/${slug}`;
+const schemaSchool = {
+  '@context': 'https://schema.org',
+  '@type': 'EducationalOrganization',
+  name: school.name,
+  url: toAbsoluteUrl(canonicalPath),
+  description: pageDescription,
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonicalPath={canonicalPath}
+  ogImage="/og/filmo-og.png"
+  ogType="article"
+  jsonLd={schemaSchool}
+>
+  <section class="relative h-125 lg:min-h-[85vh] overflow-clip flex">
+    <video
+      src={school.cover}
+      class="hero-media brightness-50 md:brightness-60"
+      autoplay
+      preload="metadata"
+      muted
+      loop
+      playsinline></video>
+
+    <div
+      class="pointer-events-none absolute inset-0 -z-10 hero-overlay-gradient"
+      aria-hidden="true"
+    >
+    </div>
+
+    <div class="hero-overlay-soft" aria-hidden="true"></div>
+
+    <div
+      class="site-container relative z-10 flex flex-col gap-16 h-125 items-center justify-center lg:min-h-[85vh] lg:pb-32"
+    >
+      <BreadCrumbs items={crumbs} />
+
+      <div class="text-center flex flex-col gap-2 w-fit lg:gap-4 items-center">
+        <h1 class="text-5xl lg:text-8xl sr-only">
+          <span class="lg:block">{school.name}</span>
+        </h1>
+        <img
+          class="h-22 object-contain filter-[brightness(0)_invert(95%)]"
+          src={school.logo}
+          alt={school.name}
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+        />
+        <p class="text-lg font-medium">
+          <span class="lg:block">Lo vivimos con ellos y nosotros</span>
+          <span class="lg:block">lo guardamos para siempre.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+  <GrainSection>
+    <div class="site-container lg:pb-20">
+      <div class="grid w-full grid-cols-1 gap-10 sm:grid-cols-2 lg:gap-16">
+        {
+          school.proms.map((p, index) => {
+            const isOddLastCard =
+              school.proms.length % 2 !== 0 &&
+              index === school.proms.length - 1;
+            const promPreview = {
+              ...p,
+              schoolSlug: school.id,
+              schoolName: school.name,
+            };
+
+            return (
+              <div
+                class:list={[
+                  'w-full',
+                  isOddLastCard && 'sm:col-span-2 sm:flex sm:justify-center',
+                ]}
+              >
+                <div class:list={['w-full', isOddLastCard && 'sm:w-1/2']}>
+                  <PreviewCard type="prom" item={promPreview} />
+                </div>
+              </div>
+            );
+          })
+        }
+      </div>
+    </div>
+  </GrainSection>
+  <CTA />
+  <IG />
+</BaseLayout>

@@ -1,0 +1,36 @@
+---
+import YellowButton from "../ui/YellowButton.astro"
+---
+<section class="relative overflow-clip h-130 w-full flex items-center justify-center isolate">
+  <div class=' px-5 z-10 flex flex-col items-center gap-4 text-center'>
+    <span class='font-medium text-white uppercase z-10'>colegios</span>
+    <h2 class='text-4xl lg:text-7xl mb-6'>
+      <span class='lg:block'>¿Será tu colegio el</span>
+      <span class='lg:block'>próximo en nuestra</span>
+      <span class='lg:block'>historia?</span>
+    </h2>
+    <YellowButton dropShadow={false} href="https://wa.me/+593983903842" blank={true} cls='px-4 py-2.5' text="Contáctanos" />
+  </div>
+  <>
+    <img
+      src="/img/cta.webp"
+      alt="Call to Action background"
+      class="absolute inset-0 -z-10 h-full w-full object-cover"
+      loading="lazy"
+      fetchpriority="low"
+      decoding="async"
+    />
+
+    <div
+      class="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-full max-w-full bg-filmo-black-100/60"
+      aria-hidden="true"
+    >
+    </div>
+
+    <div
+      class="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-full w-full bg-[linear-gradient(0deg,rgba(12,10,9,0.8)_0%,rgba(12,10,9,0)_100%)]"
+      aria-hidden="true"
+    >
+    </div>
+  </>
+</section>

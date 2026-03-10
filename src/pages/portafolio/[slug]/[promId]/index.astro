@@ -1,0 +1,219 @@
+---
+import BaseLayout from '@/components/layouts/BaseLayout.astro';
+import PromHeroCollage from '@/components/layouts/PromHeroCollage.astro';
+import PromCollage from '@/components/layouts/PromCollage.astro';
+import { getStrapiData } from '@/components/lib/strapi';
+import type { PromDetail, SchoolPromRef, SchoolSlug } from '@/components/lib/types';
+import BreadCrumbs from '@/components/ui/BreadCrumbs.astro';
+import { toRoman, capitalizeSlug } from '@/components/lib/strapi';
+import CTA from '@/components/sections/CTA.astro';
+import IG from '@/components/sections/IG.astro';
+import GrainSection from '@/components/layouts/GrainSection.astro';
+import { toAbsoluteUrl } from '@/components/lib/seo';
+
+interface Params {
+  slug: string;
+  promId: string;
+}
+
+export async function getStaticPaths() {
+  try {
+    const schools = await getStrapiData<SchoolSlug[]>('/api/schools/slugs');
+
+    const paths: Array<{ params: { slug: string; promId: string } }> = [];
+
+    for (const school of schools) {
+      const proms = await getStrapiData<SchoolPromRef[]>(`/api/schools/${school.slug}/proms`);
+
+      for (const prom of proms) {
+        paths.push({
+          params: {
+            slug: school.slug,
+            promId: String(prom.prom),
+          },
+        });
+      }
+    }
+
+    return paths;
+  } catch (error) {
+    console.error('Failed to build static paths for prom page:', error);
+    return [];
+  }
+}
+
+const { slug, promId } = Astro.params as Params;
+
+let prom: PromDetail | null = null
+
+try {
+  prom = await getStrapiData<PromDetail>(`/api/schools/${slug}/proms/${promId}`);
+} catch (error) {
+  console.error(`Failed to load prom data for ${slug}/${promId}:`, error);
+}
+
+if (!prom) {
+  throw new Error(`School not found for slug: ${slug}`);
+}
+
+const promKicker =
+  prom.id > 2000
+    ? `Class of ${prom.id}`
+    : `Promoción ${toRoman(prom.id)}`
+
+const crumbs = [
+  { label: 'Portafolio', href: '/portafolio' },
+  { label: capitalizeSlug(slug), href: `/portafolio/${slug}` },
+  { label: promKicker }
+];
+
+const schoolName = capitalizeSlug(slug);
+const pageTitle = `Prom ${promId} - ${schoolName} | Filmo`;
+const pageDescription = `Fotos y videos profesionales de la promoción ${promId} del ${schoolName}.`;
+const canonicalPath = `/portafolio/${slug}/${promId}`;
+const ogImage = `/og/${slug}-${promId}.png`;
+
+const schemaBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Portafolio',
+      item: toAbsoluteUrl('/portafolio'),
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: schoolName,
+      item: toAbsoluteUrl(`/portafolio/${slug}`),
+    },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: promKicker,
+      item: toAbsoluteUrl(canonicalPath),
+    },
+  ],
+};
+
+const schemaProm = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: `${promKicker} - ${schoolName}`,
+  description: `Cobertura audiovisual de ${promKicker} del ${schoolName}.`,
+  url: toAbsoluteUrl(canonicalPath),
+  creator: {
+    '@type': 'Organization',
+    name: 'Filmo',
+    url: toAbsoluteUrl('/'),
+  },
+};
+
+const schemaVideo = prom.videoId
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'VideoObject',
+      name: `${promKicker} - ${schoolName}`,
+      description: `Resumen audiovisual de ${promKicker} del ${schoolName}.`,
+      thumbnailUrl: toAbsoluteUrl(ogImage),
+      uploadDate: new Date().toISOString().split('T')[0],
+      embedUrl: `https://player.vimeo.com/video/${prom.videoId}`,
+      contentUrl: `https://player.vimeo.com/video/${prom.videoId}`,
+    }
+  : null;
+
+const jsonLd = schemaVideo
+  ? [schemaBreadcrumb, schemaProm, schemaVideo]
+  : [schemaBreadcrumb, schemaProm];
+
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonicalPath={canonicalPath}
+  ogImage={ogImage}
+  ogType="article"
+  jsonLd={jsonLd}
+>
+  <section class="relative h-125 lg:min-h-[90vh] overflow-clip flex">
+    <PromHeroCollage promPics={prom.pics} seed={`${slug}-${promId}`} />
+
+    <div
+      class="pointer-events-none absolute inset-0 -z-10 hero-overlay-gradient"
+      aria-hidden="true"
+    >
+    </div>
+
+    <div class="hero-overlay-soft" aria-hidden="true"></div>
+
+    <div
+      class="site-container relative z-10 flex flex-col gap-16 h-125 items-center justify-center lg:min-h-[90vh] lg:pb-32"
+    >
+
+      <BreadCrumbs items={crumbs} />
+
+      <div
+        class="text-center flex flex-col gap-2 w-fit lg:gap-4 items-center"
+      >
+        <h1 class="text-5xl lg:text-8xl">
+          {promKicker}
+        </h1>
+      </div>
+    </div>
+  </section>
+  <GrainSection>
+    <div class="site-container flex flex-col gap-8 lg:gap-16">
+      {
+        prom.text ? (
+          <section class="flex flex-col w-full lg:w-10/12">
+            <p class="font-garamond font-semibold text-2xl lg:text-4xl" set:html={prom.text} />
+            {
+              prom.subText ?? (
+                <span class="lg:ml-4 mt-3 font-figtree text-filmo-gray font-medium text-lg" set:html={prom.subText} />
+              )
+            }
+          </section>
+        ) : (
+          <></>
+        )
+      }
+      <section class="pb-16">
+        <PromCollage promPics={prom.pics} seed={`${slug}-${promId}`} />
+      </section>
+
+      <section class="flex flex-col items-center gap-8 lg:gap-16 pb-16">
+
+        <div class="flex flex-col items-center text-center">
+          <span class="font-medium text-filmo-gray uppercase">Video</span>
+          <h2 class="text-white font-extrabold text-4xl text-balance lg:text-6xl">
+            <span class="lg:block">Un resumen</span>
+            <span class="lg:block">de lo que se vivió</span>
+          </h2>
+        </div>
+
+        <div class="lg:aspect-video w-11/12 bg-filmo-black-80 rounded-xl overflow-hidden max-md:w-full">
+          <div style={{ padding: '56.25% 0 0 0', position: 'relative' }}>
+            <iframe
+              src={`https://player.vimeo.com/video/${prom.videoId}?title=0&byline=0&portrait=0&badge=0&autopause=1&player_id=0&app_id=58479&quality=1080p&loop=1`}
+              allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+              referrerpolicy="strict-origin-when-cross-origin"
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+              }}
+              title=""
+            />
+          </div>
+        </div>
+      </section>
+    </div>
+  </GrainSection>
+  <CTA />
+  <IG />
+</BaseLayout>
