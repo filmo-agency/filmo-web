@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/ig",
+      "destination": "https://giving-sunrise-e8474a0478.strapiapp.com/api/ig"
+    }
+  ]
+}

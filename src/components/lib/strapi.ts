@@ -12,6 +12,8 @@ interface StrapiCachePayload {
 const STRAPI_CACHE_FILE_PATH = path.resolve(process.cwd(), 'src/data/strapi-cache.json');
 const rawStrapiBaseUrl = import.meta.env.PUBLIC_STRAPI_URL ?? '';
 const STRAPI_DATA_MODE = getStrapiDataMode(import.meta.env.STRAPI_DATA_MODE);
+const STRAPI_MAX_RETRIES = 2;
+const RETRYABLE_HTTP_STATUSES = new Set([408, 425, 429, 500, 502, 503, 504]);
 
 export const STRAPI_BASE_URL = sanitizeEnvValue(rawStrapiBaseUrl);
 
@@ -67,6 +69,47 @@ function resolveRemoteUrl(endpoint: string): string {
   return new URL(endpoint, resolveStrapiBaseUrl()).toString();
 }
 
+function shouldRetryStatus(status: number): boolean {
+  return RETRYABLE_HTTP_STATUSES.has(status);
+}
+
+function wait(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+async function fetchWithRetry(url: string): Promise<Response> {
+  let attempt = 0;
+  let lastError: Error | null = null;
+
+  while (attempt <= STRAPI_MAX_RETRIES) {
+    try {
+      const response = await fetch(url);
+
+      if (response.ok || !shouldRetryStatus(response.status) || attempt === STRAPI_MAX_RETRIES) {
+        return response;
+      }
+
+      const delayMs = 250 * 2 ** attempt;
+      await wait(delayMs);
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error));
+
+      if (attempt === STRAPI_MAX_RETRIES) {
+        throw lastError;
+      }
+
+      const delayMs = 250 * 2 ** attempt;
+      await wait(delayMs);
+    }
+
+    attempt += 1;
+  }
+
+  throw lastError ?? new Error('Unknown Strapi fetch error.');
+}
+
 async function loadLocalCache(): Promise<StrapiCachePayload | null> {
   if (!localCachePromise) {
     localCachePromise = readFile(STRAPI_CACHE_FILE_PATH, 'utf-8')
@@ -90,29 +133,40 @@ async function getCachedResponse(endpoint: string): Promise<unknown | undefined>
 export async function getStrapiData<T>(url: string): Promise<T> {
   const endpoint = normalizeEndpoint(url);
 
-  if (STRAPI_DATA_MODE !== 'remote') {
-    const cachedResponse = await getCachedResponse(endpoint);
+  const cachedResponse = await getCachedResponse(endpoint);
+  const hasCachedResponse = cachedResponse !== undefined;
 
-    if (cachedResponse !== undefined) {
+  if (STRAPI_DATA_MODE === 'local') {
+    if (hasCachedResponse) {
       return cachedResponse as T;
     }
 
-    if (STRAPI_DATA_MODE === 'local') {
-      throw new Error(
-        `No local cache entry found for "${endpoint}". Run "npm run strapi:cache" to generate src/data/strapi-cache.json.`,
-      );
-    }
-  }
-
-  const response = await fetch(resolveRemoteUrl(endpoint));
-
-  if (!response.ok) {
     throw new Error(
-      `Error fetching data from Strapi (${response.status}): ${response.statusText}`,
+      `No local cache entry found for "${endpoint}". Run "npm run strapi:cache" to generate src/data/strapi-cache.json.`,
     );
   }
 
-  return (await response.json()) as T;
+  try {
+    const response = await fetchWithRetry(resolveRemoteUrl(endpoint));
+
+    if (!response.ok) {
+      throw new Error(
+        `Error fetching data from Strapi (${response.status}): ${response.statusText}`,
+      );
+    }
+
+    return (await response.json()) as T;
+  } catch (error) {
+    if (hasCachedResponse) {
+      console.warn(
+        `Strapi request failed for "${endpoint}". Using cached data from ${STRAPI_CACHE_FILE_PATH}.`,
+        error,
+      );
+      return cachedResponse as T;
+    }
+
+    throw error;
+  }
 }
 
 export function toRoman(num: number): string {

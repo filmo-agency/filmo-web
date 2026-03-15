@@ -60,6 +60,7 @@ const strapiBaseUrl = resolveStrapiBaseUrl(rawStrapiBaseUrl);
 const endpoint = strapiBaseUrl
   ? new URL('/api/ig', strapiBaseUrl).toString()
   : '';
+const clientEndpoint = import.meta.env.PROD ? '/api/ig' : endpoint;
 
 let initialPosts: InstagramPost[] = [];
 let initialError = '';
@@ -84,7 +85,7 @@ if (!endpoint) {
 <GrainSection contentClass="overflow-x-clip">
   <div
     class="site-container flex flex-col pt-20 gap-10 lg:gap-20 lg:h-fit lg:flex-row lg:items-center lg:justify-between"
-    data-ig-endpoint={endpoint}
+    data-ig-endpoint={clientEndpoint}
     id="ig-feed"
   >
     <div
@@ -137,6 +138,7 @@ if (!endpoint) {
                   loading="lazy"
                   fetchpriority="low"
                   decoding="async"
+                  referrerpolicy="no-referrer"
                 />
               </a>
             ))
@@ -200,7 +202,7 @@ if (!endpoint) {
           return `
             <a href="${permalink}" target="_blank" rel="noopener noreferrer" class="relative group block rounded-xl aspect-[3/4] overflow-clip shrink-0 w-[72vw] max-w-[18rem] snap-start lg:w-[18rem]">
               ${iconMarkup ? `<span class="absolute top-3 right-3 z-10">${iconMarkup}</span>` : ''}
-              <img src="${previewUrl}" alt="Post de Instagram" class="h-full w-full object-cover transition-transform duration-300 " loading="lazy" fetchpriority="low" decoding="async" />
+              <img src="${previewUrl}" alt="Post de Instagram" class="h-full w-full object-cover transition-transform duration-300 " loading="lazy" fetchpriority="low" decoding="async" referrerpolicy="no-referrer" />
             </a>
           `;
         });
