@@ -9,7 +9,11 @@ export const GET: APIRoute = ({ request }) => {
   const token = url.searchParams.get('hub.verify_token');
   const challenge = url.searchParams.get('hub.challenge');
 
-  const VERIFY_TOKEN = import.meta.env.IG_WEBHOOK_VERIFY_TOKEN;
+  // Dependiendo de Astro/Vercel, usamos ambas formas para asegurar que lea la variable:
+  const VERIFY_TOKEN = process.env.IG_WEBHOOK_VERIFY_TOKEN || import.meta.env.IG_WEBHOOK_VERIFY_TOKEN;
+
+  // Log para debuggear en los logs de Vercel
+  console.log(`Petición GET de Meta recibida | Mode: ${mode} | Token coincide: ${token === VERIFY_TOKEN}`);
 
   if (mode === 'subscribe' && token === VERIFY_TOKEN) {
     console.log('WEBHOOK_VERIFIED');
