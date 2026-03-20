@@ -1,4 +1,4 @@
-const DEFAULT_SITE_URL = 'https://filmostudio.com';
+const DEFAULT_SITE_URL = 'https://www.filmostudio.com';
 
 function sanitizeEnvValue(value: string): string {
   return value.trim().replace(/^['"]|['"]$/g, '');
