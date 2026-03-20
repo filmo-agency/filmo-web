@@ -1,33 +1,23 @@
 import type { InstagramPost } from './types';
 
-function resolveStrapiBaseUrl() {
-  const raw = (import.meta.env.PUBLIC_STRAPI_URL ?? '').trim().replace(/^['"]|['"]$/g, '');
-
-  if (!raw) {
-    throw new Error('Missing PUBLIC_STRAPI_URL environment variable.');
-  }
-
-  if (/^https?:\/\//i.test(raw)) {
-    return raw;
-  }
-
-  if (/^(localhost|127\.0\.0\.1|0\.0\.0\.0)(:\d+)?(\/|$)/i.test(raw)) {
-    return `http://${raw}`;
-  }
-
-  return `https://${raw}`;
-}
-
 export async function getInstagramPosts(): Promise<InstagramPost[]> {
+  const token = import.meta.env.IG_ACCESS_TOKEN;
+
+  if (!token) {
+    console.warn('Falta la variable de entorno IG_ACCESS_TOKEN.');
+    return [];
+  }
+
   try {
-    const endpoint = new URL('/api/ig', resolveStrapiBaseUrl()).toString();
+    const endpoint = `https://graph.instagram.com/me/media?fields=id,media_type,media_url,thumbnail_url,permalink&limit=3&access_token=${token}`;
     const res = await fetch(endpoint);
 
     if (!res.ok) {
-      throw new Error('Failed to fetch Instagram posts');
+      throw new Error(`Failed to fetch Instagram posts: ${res.statusText}`);
     }
 
-    return (await res.json()) as InstagramPost[];
+    const json = await res.json();
+    return (json.data as InstagramPost[]) || [];
   } catch (error) {
     console.error('IG fetch error:', error);
     return [];

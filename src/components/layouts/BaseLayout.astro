@@ -13,6 +13,7 @@ interface Props {
   noindex?: boolean;
   keywords?: string[];
   jsonLd?: Record<string, unknown> | Array<Record<string, unknown>>;
+  hideFooter?: boolean;
 }
 
 const DEFAULT_DESCRIPTION =
@@ -36,6 +37,7 @@ const {
   noindex = false,
   keywords = DEFAULT_KEYWORDS,
   jsonLd,
+  hideFooter = false,
 } = Astro.props as Props;
 
 const canonical = normalizeCanonicalPath(canonicalPath);
@@ -60,8 +62,8 @@ const jsonLdBlocks = Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [];
     <meta name="keywords" content={keywords.join(', ')} />
     <meta name="theme-color" content="#151210" />
     <link rel="canonical" href={canonicalUrl} />
-    <link rel="alternate" hrefLang="es-EC" href={canonicalUrl} />
-    <link rel="alternate" hrefLang="x-default" href={canonicalUrl} />
+    <link rel="alternate" hreflang="es-EC" href={canonicalUrl} />
+    <link rel="alternate" hreflang="x-default" href={canonicalUrl} />
 
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -79,16 +81,13 @@ const jsonLdBlocks = Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [];
     <title>{title}</title>
     {
       jsonLdBlocks.map((schema) => (
-        <script
-          type="application/ld+json"
-          set:html={JSON.stringify(schema)}
-        />
+        <script type="application/ld+json" set:html={JSON.stringify(schema)} />
       ))
     }
   </head>
   <body>
     <Navbar />
     <main><slot /></main>
-    <Footer />
+    {!hideFooter && <Footer />}
   </body>
 </html>

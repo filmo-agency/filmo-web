@@ -1,0 +1,59 @@
+---
+import BaseLayout from '@/components/layouts/BaseLayout.astro';
+import YellowButton from '@/components/ui/YellowButton.astro';
+---
+
+<BaseLayout
+  title="Página no encontrada | Filmo"
+  description="Lo sentimos, la página que buscas no existe."
+  noindex={true}
+  hideFooter={true}
+>
+  <section class="relative w-full h-screen flex justify-center items-center">
+    <div class="absolute inset-0 isolate z-0">
+      <div
+        class="absolute inset-0 z-10 bg-linear-to-r from-filmo-black-100 via-filmo-black-100/80 to-transparent pointer-events-none"
+        aria-hidden="true"
+      >
+      </div>
+
+      <div
+        class="absolute inset-x-0 bottom-0 h-1/2 w-full bg-linear-to-t from-filmo-black-100 to-transparent z-10 pointer-events-none"
+        aria-hidden="true"
+      >
+      </div>
+
+      <img
+        src="/img/404.webp"
+        class="absolute w-full h-full object-cover z-0 brightness-50"
+        alt="Fondo de página no encontrada"
+        fetchpriority="high"
+      />
+    </div>
+
+    <div
+      class="site-container relative z-20 h-full flex flex-col justify-center items-start gap-4 lg:gap-6"
+    >
+      <span
+        class="text-4xl lg:text-5xl font-bold text-filmo-yellow-100 font-figtree"
+      >
+        404
+      </span>
+      <div class="flex flex-col gap-2 mb-4">
+        <h1
+          class="text-4xl lg:text-7xl leading-none font-garamond font-bold text-white"
+        >
+          <span class="lg:block">La página que intentaste</span>
+          <span class="lg:block">buscar, aun no esta editada :(</span>
+        </h1>
+        <p class="text-base lg:text-xl text-filmo-soft-white font-figtree">
+          <span class="lg:block"
+            >La escena que buscas se quedó en el guión, parece que</span
+          >
+          <span class="lg:block">los protagonistas no lo han estudiado...</span>
+        </p>
+      </div>
+      <YellowButton text="Volver al inicio" href="/" />
+    </div>
+  </section>
+</BaseLayout>
