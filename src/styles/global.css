@@ -130,7 +130,7 @@
 }
 
 @utility grain-overlay {
-  @apply pointer-events-none absolute inset-0 z-0 opacity-[.2] mix-blend-overlay;
+  @apply pointer-events-none absolute inset-0 z-0 opacity-[.25] mix-blend-overlay;
   background-image: url('/gif/grain.gif');
   background-repeat: repeat;
 }
