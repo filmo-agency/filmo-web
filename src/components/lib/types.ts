@@ -3,8 +3,8 @@ export type InstagramMediaType = 'IMAGE' | 'VIDEO' | 'CAROUSEL_ALBUM';
 export interface InstagramPost {
   id: string;
   media_type: InstagramMediaType;
-  mediaUrl: string;
-  thumbnailUrl?: string;
+  media_url: string;
+  thumbnail_url?: string;
   permalink: string;
   caption?: string;
 }
