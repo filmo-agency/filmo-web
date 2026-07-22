@@ -3,8 +3,17 @@ import BaseLayout from '@/components/layouts/BaseLayout.astro';
 import PromHeroCollage from '@/components/layouts/PromHeroCollage.astro';
 import PromCollage from '@/components/layouts/PromCollage.astro';
 import { getStrapiData } from '@/components/lib/strapi';
-import type { PromDetail, SchoolPromRef, SchoolSlug } from '@/components/lib/types';
+import type {
+  LandingHomeResponse,
+  PromDetail,
+  SchoolDetail,
+  SchoolPromRef,
+  SchoolSlug,
+} from '@/components/lib/types';
 import BreadCrumbs from '@/components/ui/BreadCrumbs.astro';
+import LastWork from '@/components/ui/LastWork.astro';
+import PreviewCard from '@/components/ui/PreviewCard.astro';
+import UnderlinedButton from '@/components/ui/UnderlinedButton.astro';
 import { toRoman, capitalizeSlug } from '@/components/lib/strapi';
 import CTA from '@/components/sections/CTA.astro';
 import IG from '@/components/sections/IG.astro';
@@ -44,10 +53,22 @@ export async function getStaticPaths() {
 
 const { slug, promId } = Astro.params as Params;
 
-let prom: PromDetail | null = null
+let prom: PromDetail | null = null;
+let school: SchoolDetail | null = null;
+let landingHome: LandingHomeResponse | null = null;
 
 try {
-  prom = await getStrapiData<PromDetail>(`/api/schools/${slug}/proms/${promId}`);
+  [prom, school, landingHome] = await Promise.all([
+    getStrapiData<PromDetail>(`/api/schools/${slug}/proms/${promId}`),
+    getStrapiData<SchoolDetail>(`/api/schools/${slug}`).catch((error) => {
+      console.error(`Failed to load school data for ${slug}:`, error);
+      return null;
+    }),
+    getStrapiData<LandingHomeResponse>('/api/landing/home').catch((error) => {
+      console.error('Failed to load landing home data:', error);
+      return null;
+    }),
+  ]);
 } catch (error) {
   console.error(`Failed to load prom data for ${slug}/${promId}:`, error);
 }
@@ -59,7 +80,7 @@ if (!prom) {
 const promKicker =
   prom.id > 2000
     ? `Class of ${prom.id}`
-    : `Promoción ${toRoman(prom.id)}`
+    : `Promoción ${toRoman(prom.id)}`;
 
 const crumbs = [
   { label: 'Portafolio', href: '/portafolio' },
@@ -67,7 +88,22 @@ const crumbs = [
   { label: promKicker }
 ];
 
-const schoolName = capitalizeSlug(slug);
+const schoolName = school?.name ?? capitalizeSlug(slug);
+const otherProms = (school?.proms ?? [])
+  .filter((p) => p.id !== prom.id)
+  .map((p) => ({
+    id: p.id,
+    cover: p.cover,
+    schoolSlug: slug,
+    schoolName,
+  }));
+const otherSchoolProms = (landingHome?.schools ?? [])
+  .filter((s) => s.slug !== slug)
+  .sort((a, b) => b.prom.id - a.prom.id)
+  .slice(0, 3);
+const showOtherProms = otherProms.length > 0;
+const hasRelatedWorks = showOtherProms || otherSchoolProms.length > 0;
+
 const pageTitle = `Prom ${promId} - ${schoolName} | Filmo`;
 const pageDescription = `Fotos y videos profesionales de la promoción ${promId} del ${schoolName}.`;
 const canonicalPath = `/portafolio/${slug}/${promId}`;
@@ -142,7 +178,7 @@ const jsonLd = schemaVideo
     <PromHeroCollage promPics={prom.pics} seed={`${slug}-${promId}`} />
 
     <div
-      class="pointer-events-none absolute inset-0 -z-10 hero-overlay-gradient"
+      class="pointer-events-none absolute inset-0 -z-10 "
       aria-hidden="true"
     >
     </div>
@@ -211,6 +247,48 @@ const jsonLd = schemaVideo
             />
           </div>
         </div>
+
+        {
+          hasRelatedWorks ? (
+            <section class="flex w-full flex-col items-center gap-2 pt-8 lg:gap-10 lg:pt-10">
+              <div class="flex w-full flex-col items-center gap-1 text-center">
+                <span class="font-medium text-filmo-gray uppercase">
+                  {showOtherProms ? schoolName : 'colegios'}
+                </span>
+                <h2 class="text-white font-extrabold text-4xl text-balance lg:text-6xl">
+                  {
+                    showOtherProms ? 'Otras Promociones' : 'Otros Trabajos'
+                  }
+                </h2>
+              </div>
+
+              <div class="grid w-full grid-cols-1 gap-10 md:grid-cols-3 lg:gap-10">
+                {
+                  showOtherProms ? (
+                    otherProms.map((p) => (
+                      <div class="w-full">
+                        <PreviewCard type="prom" item={p} />
+                      </div>
+                    ))
+                  ) : (
+                    otherSchoolProms.map((s) => (
+                      <div class="w-full">
+                        <LastWork
+                          school={s.name}
+                          img={s.prom.cover}
+                          prom={s.prom.id}
+                          slug={`${s.slug}/${s.prom.id}`}
+                        />
+                      </div>
+                    ))
+                  )
+                }
+              </div>
+            </section>
+          ) : (
+            <></>
+          )
+        }
       </section>
     </div>
   </GrainSection>
