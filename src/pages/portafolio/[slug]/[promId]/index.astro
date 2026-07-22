@@ -103,6 +103,9 @@ const otherSchoolProms = (landingHome?.schools ?? [])
   .slice(0, 3);
 const showOtherProms = otherProms.length > 0;
 const hasRelatedWorks = showOtherProms || otherSchoolProms.length > 0;
+const relatedWorksCount = showOtherProms ? otherProms.length : otherSchoolProms.length;
+const hasOneRelatedWork = relatedWorksCount === 1;
+const hasTwoRelatedWorks = relatedWorksCount === 2;
 
 const pageTitle = `Prom ${promId} - ${schoolName} | Filmo`;
 const pageDescription = `Fotos y videos profesionales de la promoción ${promId} del ${schoolName}.`;
@@ -262,7 +265,16 @@ const jsonLd = schemaVideo
                 </h2>
               </div>
 
-              <div class="grid w-full grid-cols-1 gap-10 md:grid-cols-3 lg:gap-10">
+              <div
+                class:list={[
+                  'grid w-full grid-cols-1 gap-10 lg:gap-10',
+                  hasOneRelatedWork
+                    ? 'mx-auto md:max-w-xl'
+                    : hasTwoRelatedWorks
+                      ? 'mx-auto md:max-w-4xl md:grid-cols-2'
+                    : 'md:grid-cols-3',
+                ]}
+              >
                 {
                   showOtherProms ? (
                     otherProms.map((p) => (
