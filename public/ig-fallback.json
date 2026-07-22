@@ -1,0 +1,26 @@
+[
+  {
+    "id": "000",
+    "mediaUrl": "thumbnail-1.jpg",
+    "permalink": "https://www.instagram.com/p/DbB98SYiRny/",
+    "mediaType": "CAROUSEL_ALBUM",
+    "thumbnailUrl": "thumbnail-1.jpg",
+    "timestamp": "2026-04-24T01:27:47+0000"
+  },
+  {
+    "id": "001",
+    "mediaUrl": "thumbnail-2.jpg",
+    "permalink": "https://www.instagram.com/p/Da2srcbB7FX/",
+    "mediaType": "VIDEO",
+    "thumbnailUrl": "thumbnail-2.jpg",
+    "timestamp": "2026-04-22T02:01:48+0000"
+  },
+  {
+    "id": "002",
+    "permalink": "https://www.instagram.com/p/DYdYj_HpfeV/",
+    "mediaUrl": "thumbnail-3.jpg",
+    "mediaType": "VIDEO",
+    "thumbnailUrl": "thumbnail-3.jpg",
+    "timestamp": "2026-04-20T21:49:30+0000"
+  }
+]
