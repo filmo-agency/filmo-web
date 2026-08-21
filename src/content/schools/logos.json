@@ -1,0 +1,12 @@
+{
+  "slug": "logos",
+  "name": "Logos Academy",
+  "priority": 4,
+  "promIds": [
+    27
+  ],
+  "featuredPromId": 27,
+  "published": true,
+  "logo": "/media/schools/logos/logo.png",
+  "cover": "/media/schools/logos/cover.webp"
+}

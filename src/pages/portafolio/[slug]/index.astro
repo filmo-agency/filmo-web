@@ -8,6 +8,7 @@ import CTA from '@/components/sections/CTA.astro';
 import GrainSection from '@/components/layouts/GrainSection.astro';
 import IG from '@/components/sections/IG.astro';
 import { toAbsoluteUrl } from '@/components/lib/seo';
+import { isVideoFile } from '@/components/lib/media';
 
 interface Params {
   slug: string;
@@ -35,6 +36,7 @@ const crumbs = [
 const pageTitle = `${school.name} | Filmo`;
 const pageDescription = `Cobertura audiovisual realizada para ${school.name}.`;
 const canonicalPath = `/portafolio/${slug}`;
+const hasVideoCover = isVideoFile(school.cover);
 const schemaSchool = {
   '@context': 'https://schema.org',
   '@type': 'EducationalOrganization',
@@ -53,14 +55,28 @@ const schemaSchool = {
   jsonLd={schemaSchool}
 >
   <section class="relative h-125 lg:min-h-[85vh] overflow-clip flex">
-    <video
-      src={school.cover}
-      class="hero-media brightness-50 md:brightness-60"
-      autoplay
-      preload="metadata"
-      muted
-      loop
-      playsinline></video>
+    {
+      hasVideoCover ? (
+        <video
+          src={school.cover}
+          class="hero-media brightness-50 md:brightness-60"
+          autoplay
+          preload="metadata"
+          muted
+          loop
+          playsinline
+        />
+      ) : (
+        <img
+          src={school.cover}
+          alt={`Portada de ${school.name}`}
+          class="hero-media brightness-50 md:brightness-60"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+        />
+      )
+    }
 
     <div
       class="pointer-events-none absolute inset-0 -z-10 hero-overlay-gradient"

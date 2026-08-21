@@ -4,8 +4,10 @@
   "priority": 3,
   "logo": "/media/schools/montessori/logo.png",
   "cover": "/media/schools/montessori/cover.mp4",
+  "published": true,
   "featuredPromId": 16,
   "promIds": [
+    17,
     16,
     15
   ]

@@ -2,6 +2,7 @@
 import type { PromPreviewCard, SchoolPreview } from '../lib/types';
 import UnderlinedButton from './UnderlinedButton.astro';
 import { toRoman } from '../lib/content';
+import { isVideoFile } from '../lib/media';
 
 type Props =
   | { type: 'school'; item: SchoolPreview }
@@ -12,6 +13,7 @@ const props = Astro.props as Props;
 const type = props.type;
 
 const isSchoolPreview = type === 'school';
+const hasVideoCover = isSchoolPreview && isVideoFile(props.item.cover);
 
 const promText =
   type === 'prom'
@@ -29,15 +31,26 @@ const promHref =
     isSchoolPreview ? (
       <>
         <a class="order-1 lg:order-2" href={`/portafolio/${props.item.id}`}>
-          <video
-            class="aspect-4/3 h-full object-cover sm:aspect-video rounded-xl grayscale transition duration-300 group-hover:grayscale-0 in-[.is-active]:grayscale-0 in-[.is-ipad-pro]:grayscale-0"
-            src={props.item.cover}
-            muted
-            loop
-            playsinline
-            preload="metadata"
-            data-hover-video
-          />
+          {hasVideoCover ? (
+            <video
+              class="aspect-4/3 h-full object-cover sm:aspect-video rounded-xl grayscale transition duration-300 group-hover:grayscale-0 in-[.is-active]:grayscale-0 in-[.is-ipad-pro]:grayscale-0"
+              src={props.item.cover}
+              muted
+              loop
+              playsinline
+              preload="metadata"
+              data-hover-video
+            />
+          ) : (
+            <img
+              class="aspect-4/3 h-full object-cover sm:aspect-video rounded-xl grayscale transition duration-300 group-hover:grayscale-0 in-[.is-active]:grayscale-0 in-[.is-ipad-pro]:grayscale-0"
+              src={props.item.cover}
+              alt={`Portada de ${props.item.name}`}
+              loading="lazy"
+              fetchpriority="low"
+              decoding="async"
+            />
+          )}
         </a>
         <h2 class="order-2 lg:order-1 text-pretty text-center text-3xl">
           {props.item.name}
