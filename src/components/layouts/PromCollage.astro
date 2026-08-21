@@ -1,12 +1,12 @@
 ---
-import type { StrapiImage } from '@/components/lib/types';
+import type { PortfolioImage } from '@/components/lib/types';
 
 interface Props {
-  promPics: StrapiImage[];
+  promPics: PortfolioImage[];
   seed?: string | number;
 }
 
-interface PicWithOrder extends StrapiImage {
+interface PicWithOrder extends PortfolioImage {
   __order: number;
 }
 
@@ -90,7 +90,7 @@ const mobileColumns = splitIntoColumns(orderedPics, 2);
                 ]}
               >
                 {column.map((pic) => {
-                  const imageSrc = pic.optimizedUrl || pic.url;
+                  const imageSrc = pic.url;
                   const imageAlt = `Foto de promoción ${pic.__order + 1}`;
                   const isPriorityImage = columnIndex === 0 && pic.__order < 2;
 
@@ -117,7 +117,7 @@ const mobileColumns = splitIntoColumns(orderedPics, 2);
             {mobileColumns.map((column, columnIndex) => (
               <div class="flex flex-col gap-2">
                 {column.map((pic) => {
-                  const imageSrc = pic.optimizedUrl || pic.url;
+                  const imageSrc = pic.url;
                   const imageAlt = `Foto de promoción ${pic.__order + 1}`;
                   const isPriorityImage = columnIndex === 0 && pic.__order < 2;
 

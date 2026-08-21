@@ -37,30 +37,27 @@ All commands are run from the root of the project, from a terminal:
 | `npm run preview`         | Preview your build locally, before deploying     |
 | `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
 | `npm run astro -- --help` | Get help using the Astro CLI                     |
-| `npm run strapi:cache`    | Download Strapi API responses to local JSON      |
 
-## Strapi Local Cache
+## Local Content
 
-This project can run against a local JSON snapshot to reduce Strapi Cloud API usage.
+The portfolio is managed with Astro Content Collections:
 
-1. Generate the snapshot:
+- `src/content/schools`: school metadata and promotion order
+- `src/content/proms`: promotion metadata and its media directory
+- `public/media`: original media files, organized by school and promotion
 
-```sh
-npm run strapi:cache
-```
+The site builds entirely from these local files and does not require Strapi or a
+content API.
 
-2. Start dev mode using local data only:
+Promotion galleries are discovered automatically from each entry's `mediaPath`.
+Gallery files must start with their numeric order (`01.webp`, `02.webp`,
+`27-cover.webp`, etc.). A standalone `cover.webp` remains available as a cover
+but is not added to the gallery automatically.
 
-```powershell
-$env:STRAPI_DATA_MODE='local'
-npm run dev
-```
+## Local Content Admin
 
-Available modes:
-
-- `STRAPI_DATA_MODE=remote` (default): always request Strapi API
-- `STRAPI_DATA_MODE=local`: only use `src/data/strapi-cache.json`
-- `STRAPI_DATA_MODE=hybrid`: local first, then fallback to Strapi API
+The local dashboard now lives in the sibling project `../filmo-admin`. This
+keeps its React, shadcn/Radix and server dependencies out of the public site.
 
 ## 👀 Want to learn more?
 

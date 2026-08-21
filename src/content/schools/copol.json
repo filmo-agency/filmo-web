@@ -1,0 +1,11 @@
+{
+  "name": "Unidad Educativa Particular Politécnico",
+  "slug": "copol",
+  "priority": 4,
+  "logo": "/media/schools/copol/logo.png",
+  "cover": "/media/schools/copol/cover.mp4",
+  "featuredPromId": 26,
+  "promIds": [
+    26
+  ]
+}

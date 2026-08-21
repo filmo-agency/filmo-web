@@ -1,18 +1,6 @@
-export type InstagramMediaType = 'IMAGE' | 'VIDEO' | 'CAROUSEL_ALBUM';
-
-export interface InstagramPost {
-  id: string;
-  media_type: InstagramMediaType;
-  media_url: string;
-  thumbnail_url?: string;
-  permalink: string;
-  caption?: string;
-}
-
-export interface StrapiImage {
+export interface PortfolioImage {
   id: number;
   url: string;
-  optimizedUrl: string;
   width: number;
   height: number;
 }
@@ -31,10 +19,6 @@ export interface HomeSchool {
   prom: PromSummary;
 }
 
-export interface LandingHomeResponse {
-  schools: HomeSchool[];
-}
-
 export interface SchoolPreview {
   id: string;
   name: string;
@@ -44,18 +28,6 @@ export interface SchoolPreview {
 }
 
 export interface PortfolioSchool extends SchoolPreview {}
-
-export interface PortfolioResponse {
-  schools: PortfolioSchool[];
-}
-
-export interface SchoolSlug {
-  slug: string;
-}
-
-export interface SchoolPromRef {
-  prom: number;
-}
 
 export interface SchoolPromPreview {
   id: number;
@@ -81,5 +53,5 @@ export interface PromDetail {
   text?: string | null;
   subText: string | null;
   videoId?: string | null;
-  pics: StrapiImage[];
+  pics: PortfolioImage[];
 }

@@ -1,0 +1,12 @@
+{
+  "name": "Unidad Educativa Montessori",
+  "slug": "montessori",
+  "priority": 3,
+  "logo": "/media/schools/montessori/logo.png",
+  "cover": "/media/schools/montessori/cover.mp4",
+  "featuredPromId": 16,
+  "promIds": [
+    16,
+    15
+  ]
+}

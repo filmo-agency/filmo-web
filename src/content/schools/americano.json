@@ -1,0 +1,13 @@
+{
+  "name": "Colegio Americano de Guayaquil",
+  "slug": "americano",
+  "priority": 1,
+  "logo": "/media/schools/americano/logo.png",
+  "cover": "/media/schools/americano/cover.mp4",
+  "featuredPromId": 76,
+  "promIds": [
+    76,
+    75,
+    74
+  ]
+}

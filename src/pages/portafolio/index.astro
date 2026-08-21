@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '@/components/layouts/BaseLayout.astro';
-import { getStrapiData } from '@/components/lib/strapi';
-import type { PortfolioResponse } from '@/components/lib/types';
+import { getPortfolioSchools } from '@/components/lib/content';
 import UnderlinedButton from '@/components/ui/UnderlinedButton.astro';
 import Polaroid from '@/components/ui/Polaroid.astro';
 import PreviewCard from '@/components/ui/PreviewCard.astro';
@@ -10,14 +9,7 @@ import IG from '@/components/sections/IG.astro';
 import GrainSection from '@/components/layouts/GrainSection.astro';
 import { toAbsoluteUrl } from '@/components/lib/seo';
 
-let schools: PortfolioResponse['schools'] = [];
-
-try {
-  const data = await getStrapiData<PortfolioResponse>('/api/portfolio');
-  schools = [...data.schools].sort((a, b) => a.priority - b.priority);
-} catch (error) {
-  console.error('Failed to load portfolio data:', error);
-}
+const schools = await getPortfolioSchools();
 
 const leftSchools = schools.filter((_, index) => index % 2 === 0);
 const rightSchools = schools.filter((_, index) => index % 2 !== 0);

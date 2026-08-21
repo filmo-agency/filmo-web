@@ -1,6 +1,5 @@
 import type { APIRoute } from 'astro';
-import { getStrapiData } from '@/components/lib/strapi';
-import type { SchoolPromRef, SchoolSlug } from '@/components/lib/types';
+import { getAllPromRoutes, getSchoolSlugs } from '@/components/lib/content';
 import { toAbsoluteUrl } from '@/components/lib/seo';
 
 interface SitemapUrlItem {
@@ -42,32 +41,27 @@ export const GET: APIRoute = async () => {
     },
   ];
 
-  try {
-    const schools = await getStrapiData<SchoolSlug[]>('/api/schools/slugs');
+  const [schoolSlugs, proms] = await Promise.all([
+    getSchoolSlugs(),
+    getAllPromRoutes(),
+  ]);
 
-    for (const school of schools) {
+  for (const slug of schoolSlugs) {
       urls.push({
-        loc: toAbsoluteUrl(`/portafolio/${school.slug}`),
+        loc: toAbsoluteUrl(`/portafolio/${slug}`),
         lastmod: today,
         changefreq: 'weekly',
         priority: 0.8,
       });
+  }
 
-      const proms = await getStrapiData<SchoolPromRef[]>(
-        `/api/schools/${school.slug}/proms`,
-      );
-
-      for (const prom of proms) {
-        urls.push({
-          loc: toAbsoluteUrl(`/portafolio/${school.slug}/${prom.prom}`),
-          lastmod: today,
-          changefreq: 'monthly',
-          priority: 0.7,
-        });
-      }
-    }
-  } catch (error) {
-    console.error('Failed to generate full sitemap:', error);
+  for (const prom of proms) {
+    urls.push({
+      loc: toAbsoluteUrl(`/portafolio/${prom.schoolSlug}/${prom.promId}`),
+      lastmod: today,
+      changefreq: 'monthly',
+      priority: 0.7,
+    });
   }
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>` +

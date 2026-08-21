@@ -1,8 +1,8 @@
 ---
-import type { StrapiImage } from '@/components/lib/types';
+import type { PortfolioImage } from '@/components/lib/types';
 
 interface Props {
-  promPics: StrapiImage[];
+  promPics: PortfolioImage[];
   rows?: number;
   columns?: number;
   seed?: string | number;
@@ -56,7 +56,7 @@ const basePool = promPics.length > 0
   ? shuffleDeterministic(promPics, `${seed}-${promPics.length}-${total}`)
   : [];
 
-const collagePool: StrapiImage[] = [];
+const collagePool: PortfolioImage[] = [];
 
 if (basePool.length > 0) {
   while (collagePool.length < total) {
@@ -86,7 +86,7 @@ const collageRows = Array.from({ length: rows }, (_, rowIndex) => {
           ]}
         >
           {row.map((pic, columnIndex) => {
-            const imageSrc = pic.optimizedUrl || pic.url;
+            const imageSrc = pic.url;
             const imageAlt = `Foto de promoción ${rowIndex * columns + columnIndex + 1}`;
             const isPriorityImage = rowIndex === 0 && columnIndex < 2;
 

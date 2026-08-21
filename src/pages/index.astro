@@ -1,8 +1,8 @@
 ---
 import BaseLayout from '@/components/layouts/BaseLayout.astro';
 import GrainSection from '@/components/layouts/GrainSection.astro';
-import { getStrapiData } from '@/components/lib/strapi';
-import type { HomeSchool, LandingHomeResponse } from '@/components/lib/types';
+import { getHomeSchools } from '@/components/lib/content';
+import type { HomeSchool } from '@/components/lib/types';
 import LastWork from '@/components/ui/LastWork.astro';
 import UnderlinedButton from '@/components/ui/UnderlinedButton.astro';
 import YellowButton from '@/components/ui/YellowButton.astro';
@@ -10,14 +10,7 @@ import CTA from '@/components/sections/CTA.astro';
 import IG from '@/components/sections/IG.astro';
 import { toAbsoluteUrl } from '@/components/lib/seo';
 
-let schools: LandingHomeResponse['schools'] = [];
-
-try {
-  const data = await getStrapiData<LandingHomeResponse>('/api/landing/home');
-  schools = data.schools;
-} catch (error) {
-  console.error('Failed to load landing home data:', error);
-}
+const schools = await getHomeSchools();
 
 const MAX_LAST_WORKS = 3;
 

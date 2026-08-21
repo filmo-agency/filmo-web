@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '@/components/layouts/BaseLayout.astro';
-import { getStrapiData } from '@/components/lib/strapi';
-import type { SchoolDetail, SchoolSlug } from '@/components/lib/types';
+import { getSchoolDetail, getSchoolSlugs } from '@/components/lib/content';
 import UnderlinedButton from '@/components/ui/UnderlinedButton.astro';
 import BreadCrumbs from '@/components/ui/BreadCrumbs.astro';
 import PreviewCard from '@/components/ui/PreviewCard.astro';
@@ -15,27 +14,14 @@ interface Params {
 }
 
 export async function getStaticPaths() {
-  try {
-    const schools = await getStrapiData<SchoolSlug[]>('/api/schools/slugs');
+  const slugs = await getSchoolSlugs();
 
-    return schools.map((school) => ({
-      params: { slug: school.slug },
-    }));
-  } catch (error) {
-    console.error('Failed to build static paths for school page:', error);
-    return [];
-  }
+  return slugs.map((slug) => ({ params: { slug } }));
 }
 
 const { slug } = Astro.params as Params;
 
-let school: SchoolDetail | null = null;
-
-try {
-  school = await getStrapiData<SchoolDetail>(`/api/schools/${slug}`);
-} catch (error) {
-  console.error(`Failed to load school data for ${slug}:`, error);
-}
+const school = await getSchoolDetail(slug);
 
 if (!school) {
   throw new Error(`School not found for slug: ${slug}`);
