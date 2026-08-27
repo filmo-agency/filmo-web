@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '@/components/layouts/BaseLayout.astro';
 import GrainSection from '@/components/layouts/GrainSection.astro';
-import { getHomeSchools } from '@/components/lib/content';
+import { getHomeSchools, hasFeaturedProm } from '@/components/lib/content';
 import type { HomeSchool } from '@/components/lib/types';
 import LastWork from '@/components/ui/LastWork.astro';
 import UnderlinedButton from '@/components/ui/UnderlinedButton.astro';
@@ -12,6 +12,20 @@ import { toAbsoluteUrl } from '@/components/lib/seo';
 
 const schools = await getHomeSchools();
 
+const centeredTrustSlugs = new Set(['americano', 'interamerican']);
+const centeredTrustSchools = schools.filter((school) =>
+  centeredTrustSlugs.has(school.slug),
+);
+const otherTrustSchools = schools.filter(
+  (school) => !centeredTrustSlugs.has(school.slug),
+);
+const trustCenterIndex = Math.ceil(otherTrustSchools.length / 2);
+const trustCarouselSchools = [
+  ...otherTrustSchools.slice(0, trustCenterIndex),
+  ...centeredTrustSchools,
+  ...otherTrustSchools.slice(trustCenterIndex),
+];
+
 const MAX_LAST_WORKS = 3;
 
 const isAmericanoSchool = (school: HomeSchool) => {
@@ -19,7 +33,9 @@ const isAmericanoSchool = (school: HomeSchool) => {
   return normalizedValues.includes('americano');
 };
 
-const sortedSchools = [...schools].sort((a, b) => b.prom.id - a.prom.id);
+const sortedSchools = schools
+  .filter(hasFeaturedProm)
+  .sort((a, b) => b.prom.id - a.prom.id);
 const americanoSchool = sortedSchools.find(isAmericanoSchool);
 
 let latestWorks = sortedSchools.slice(0, MAX_LAST_WORKS);
@@ -104,45 +120,49 @@ const schemaWebsite = {
     </div>
   </section>
   <GrainSection>
-    <div class="site-container flex flex-col items-center gap-10">
+    <div class="site-container flex flex-col items-center gap-16">
       <h2 class="text-lg text-filmo-gray font-figtree font-medium uppercase">
         Hemos trabajado con
       </h2>
       <div
-        class="grid grid-cols-1 md:grid-cols-4 gap-16 lg:gap-8 items-center justify-items-center"
+        class="trust-carousel w-full overflow-hidden"
+        aria-label={`Colegios que han trabajado con Filmo: ${schools.map((school) => school.name).join(', ')}`}
+        role="region"
       >
-        <img
-          class="filter-[brightness(0)_invert(95%)] h-14 w-auto opacity-50 order-2 lg:order-1"
-          src="/img/americano.png"
-          alt="Americano"
-          loading="lazy"
-          fetchpriority="low"
-          decoding="async"
-        />
-        <img
-          class="filter-[brightness(0)_invert(95%)] h-18 w-auto opacity-50 order-1 lg:order-2"
-          src="/img/interamerican.png"
-          alt="Interamerican"
-          loading="lazy"
-          fetchpriority="low"
-          decoding="async"
-        />
-        <img
-          class="filter-[brightness(0)_invert(95%)] h-10 w-auto opacity-50 order-3"
-          src="/img/copol.png"
-          alt="Copol"
-          loading="lazy"
-          fetchpriority="low"
-          decoding="async"
-        />
-        <img
-          class="filter-[brightness(0)_invert(95%)] h-12 w-auto opacity-50 order-4"
-          src="/img/montessori.png"
-          alt="Montessori"
-          loading="lazy"
-          fetchpriority="low"
-          decoding="async"
-        />
+        <div class="trust-carousel-track" aria-hidden="true">
+          <div class="trust-carousel-group">
+            {
+              trustCarouselSchools.map((school) => (
+                <div class="flex shrink-0 items-center justify-center px-6 lg:px-10">
+                  <img
+                    class="h-18 lg:h-26 w-auto max-w-90 object-contain brightness-125"
+                    src={school.logos.grayscale}
+                    alt=""
+                    loading="lazy"
+                    fetchpriority="low"
+                    decoding="async"
+                  />
+                </div>
+              ))
+            }
+          </div>
+          <div class="trust-carousel-group">
+            {
+              trustCarouselSchools.map((school) => (
+                <div class="flex shrink-0 items-center justify-center px-6 lg:px-10">
+                  <img
+                    class="h-18 lg:h-26 w-auto max-w-90 object-contain brightness-125"
+                    src={school.logos.grayscale}
+                    alt=""
+                    loading="lazy"
+                    fetchpriority="low"
+                    decoding="async"
+                  />
+                </div>
+              ))
+            }
+          </div>
+        </div>
       </div>
     </div>
   </GrainSection>
@@ -326,3 +346,67 @@ const schemaWebsite = {
   <CTA />
   <IG />
 </BaseLayout>
+
+<style>
+  .trust-carousel {
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 8%,
+      black 92%,
+      transparent
+    );
+  }
+
+  .trust-carousel-track {
+    display: flex;
+    width: max-content;
+    animation: trust-carousel-scroll 25s linear infinite;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    will-change: transform;
+  }
+
+  .trust-carousel-group {
+    display: flex;
+    width: max-content;
+    flex-shrink: 0;
+    align-items: center;
+  }
+
+  .trust-carousel-group img {
+    backface-visibility: hidden;
+    transform: translateZ(0);
+  }
+
+  @keyframes trust-carousel-scroll {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .trust-carousel {
+      mask-image: none;
+    }
+
+    .trust-carousel-track {
+      width: 100%;
+      animation: none;
+    }
+
+    .trust-carousel-group {
+      width: 100%;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .trust-carousel-group + .trust-carousel-group {
+      display: none;
+    }
+  }
+</style>

@@ -6,6 +6,7 @@ import {
   capitalizeSlug,
   getAllPromRoutes,
   getHomeSchools,
+  hasFeaturedProm,
   getPromDetail,
   getSchoolDetail,
   toRoman,
@@ -67,6 +68,7 @@ const otherProms = (school?.proms ?? [])
     schoolName,
   }));
 const otherSchoolProms = homeSchools
+  .filter(hasFeaturedProm)
   .filter((s) => s.slug !== slug)
   .sort((a, b) => b.prom.id - a.prom.id)
   .slice(0, 3);

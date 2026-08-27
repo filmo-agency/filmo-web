@@ -4,10 +4,12 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 import sharp from 'sharp';
 import type {
   HomeSchool,
+  HomeSchoolWithProm,
   PortfolioImage,
   PortfolioSchool,
   PromDetail,
   SchoolDetail,
+  SchoolLogos,
 } from './types';
 
 type SchoolEntry = CollectionEntry<'schools'>;
@@ -30,6 +32,17 @@ async function getPromEntries(): Promise<PromEntry[]> {
 
 function getPromKey(schoolSlug: string, promId: number): string {
   return `${schoolSlug}-${promId}`;
+}
+
+function getSchoolLogos(school: SchoolEntry['data']): SchoolLogos {
+  const fallback = school.logos?.color ?? school.logo ?? '';
+
+  return {
+    color: school.logos?.color ?? fallback,
+    black: school.logos?.black ?? fallback,
+    grayscale: school.logos?.grayscale ?? fallback,
+    white: school.logos?.white ?? fallback,
+  };
 }
 
 function resolvePromMediaDirectory(mediaPath: string): string {
@@ -110,21 +123,23 @@ export async function getHomeSchools(): Promise<HomeSchool[]> {
       getPromKey(school.slug, school.featuredPromId ?? -1),
     );
 
-    if (!featuredProm) {
-      throw new Error(
-        `Featured prom ${school.featuredPromId} not found for ${school.slug}.`,
-      );
-    }
-
     return {
       slug: school.slug,
       name: school.name,
       priority: school.priority,
-      logo: school.logo,
+      logos: getSchoolLogos(school),
       cover: school.cover,
-      prom: { id: featuredProm.promId, cover: featuredProm.cover },
+      prom: featuredProm
+        ? { id: featuredProm.promId, cover: featuredProm.cover }
+        : null,
     };
   });
+}
+
+export function hasFeaturedProm(
+  school: HomeSchool,
+): school is HomeSchoolWithProm {
+  return school.prom !== null;
 }
 
 export async function getPortfolioSchools(): Promise<PortfolioSchool[]> {
@@ -132,7 +147,7 @@ export async function getPortfolioSchools(): Promise<PortfolioSchool[]> {
     id: school.slug,
     name: school.name,
     priority: school.priority,
-    logo: school.logo,
+    logos: getSchoolLogos(school),
     cover: school.cover,
   }));
 }
@@ -161,7 +176,7 @@ export async function getSchoolDetail(
   return {
     id: school.slug,
     name: school.name,
-    logo: school.logo,
+    logos: getSchoolLogos(school),
     cover: school.cover,
     proms: school.promIds.map((promId) => {
       const prom = promById.get(promId);

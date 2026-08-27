@@ -7,7 +7,15 @@ const schools = defineCollection({
     name: z.string(),
     slug: z.string(),
     priority: z.number().int(),
-    logo: z.string(),
+    logo: z.string().optional(),
+    logos: z
+      .object({
+        black: z.string(),
+        color: z.string(),
+        grayscale: z.string(),
+        white: z.string(),
+      })
+      .optional(),
     cover: z.string(),
     published: z.boolean().default(true),
     featuredPromId: z.number().int().nullable(),

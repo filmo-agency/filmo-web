@@ -1,11 +1,18 @@
 {
   "name": "Unidad Educativa Particular Politécnico",
   "slug": "copol",
-  "priority": 4,
-  "logo": "/media/schools/copol/logo.png",
-  "cover": "/media/schools/copol/cover.mp4",
+  "priority": 3,
+  "published": true,
   "featuredPromId": 26,
   "promIds": [
     26
-  ]
+  ],
+  "logo": "/media/schools/copol/logo-color.webp",
+  "logos": {
+    "color": "/media/schools/copol/logo-color.webp",
+    "black": "/media/schools/copol/logo-black.webp",
+    "grayscale": "/media/schools/copol/logo-grayscale.webp",
+    "white": "/media/schools/copol/logo-white.webp"
+  },
+  "cover": "/media/schools/copol/cover.mp4"
 }

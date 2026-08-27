@@ -2,12 +2,19 @@
   "name": "Colegio Americano de Guayaquil",
   "slug": "americano",
   "priority": 1,
-  "logo": "/media/schools/americano/logo.png",
-  "cover": "/media/schools/americano/cover.mp4",
+  "published": true,
   "featuredPromId": 76,
   "promIds": [
     76,
     75,
     74
-  ]
+  ],
+  "logo": "/media/schools/americano/logo-color.webp",
+  "logos": {
+    "color": "/media/schools/americano/logo-color.webp",
+    "black": "/media/schools/americano/logo-black.webp",
+    "grayscale": "/media/schools/americano/logo-grayscale.webp",
+    "white": "/media/schools/americano/logo-white.webp"
+  },
+  "cover": "/media/schools/americano/cover.mp4"
 }

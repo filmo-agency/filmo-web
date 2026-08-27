@@ -2,12 +2,18 @@
   "name": "InterAmerican Academy",
   "slug": "interamerican",
   "priority": 2,
-  "logo": "/media/schools/interamerican/logo.png",
-  "cover": "/media/schools/interamerican/cover.mp4",
   "published": true,
   "featuredPromId": 2025,
   "promIds": [
     2026,
     2025
-  ]
+  ],
+  "logo": "/media/schools/interamerican/logo-color.webp",
+  "logos": {
+    "color": "/media/schools/interamerican/logo-color.webp",
+    "black": "/media/schools/interamerican/logo-black.webp",
+    "grayscale": "/media/schools/interamerican/logo-grayscale.webp",
+    "white": "/media/schools/interamerican/logo-white.webp"
+  },
+  "cover": "/media/schools/interamerican/cover.mp4"
 }

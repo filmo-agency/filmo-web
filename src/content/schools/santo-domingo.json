@@ -1,0 +1,18 @@
+{
+  "name": "Unidad Educativa Particular Bilingüe \"Santo Domingo de Guzmán\"",
+  "slug": "santo-domingo",
+  "priority": 4,
+  "published": true,
+  "featuredPromId": 63,
+  "promIds": [
+    63
+  ],
+  "logo": "/media/schools/santo-domingo/logo-color.webp",
+  "logos": {
+    "color": "/media/schools/santo-domingo/logo-color.webp",
+    "black": "/media/schools/santo-domingo/logo-black.webp",
+    "grayscale": "/media/schools/santo-domingo/logo-grayscale.webp",
+    "white": "/media/schools/santo-domingo/logo-white.webp"
+  },
+  "cover": "/media/schools/santo-domingo/cover.webp"
+}

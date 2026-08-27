@@ -55,14 +55,25 @@ const promHref =
         <h2 class="order-2 lg:order-1 text-pretty text-center text-3xl">
           {props.item.name}
         </h2>
-        <img
-          class="order-3 max-md:hidden mt-2 h-14 transition duration-300 opacity-70 filter-[brightness(0)_invert(95%)] group-hover:opacity-100 group-hover:filter-none in-[.is-active]:opacity-100 in-[.is-active]:filter-none in-[.is-ipad-pro]:opacity-100 in-[.is-ipad-pro]:filter-none"
-          src={props.item.logo}
-          alt={props.item.name}
-          loading="lazy"
-          fetchpriority="low"
-          decoding="async"
-        />
+        <div class="relative order-3 mt-2 h-14 w-full max-md:hidden">
+          <img
+            class="absolute inset-0 mx-auto h-14 max-w-full object-contain opacity-70 transition-opacity duration-300 group-hover:opacity-0 in-[.is-active]:opacity-0 in-[.is-ipad-pro]:opacity-0"
+            src={props.item.logos.white}
+            alt={props.item.name}
+            loading="lazy"
+            fetchpriority="low"
+            decoding="async"
+          />
+          <img
+            class="absolute inset-0 mx-auto h-14 max-w-full object-contain opacity-0 transition-opacity duration-300 group-hover:opacity-100 in-[.is-active]:opacity-100 in-[.is-ipad-pro]:opacity-100"
+            src={props.item.logos.color}
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+            fetchpriority="low"
+            decoding="async"
+          />
+        </div>
         <UnderlinedButton
           cls="order-4"
           text="ver más"

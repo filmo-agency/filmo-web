@@ -1,14 +1,20 @@
 {
   "name": "Unidad Educativa Montessori",
   "slug": "montessori",
-  "priority": 3,
-  "logo": "/media/schools/montessori/logo.png",
-  "cover": "/media/schools/montessori/cover.mp4",
+  "priority": 5,
   "published": true,
   "featuredPromId": 16,
   "promIds": [
     17,
     16,
     15
-  ]
+  ],
+  "logo": "/media/schools/montessori/logo-color.webp",
+  "logos": {
+    "color": "/media/schools/montessori/logo-color.webp",
+    "black": "/media/schools/montessori/logo-black.webp",
+    "grayscale": "/media/schools/montessori/logo-grayscale.webp",
+    "white": "/media/schools/montessori/logo-white.webp"
+  },
+  "cover": "/media/schools/montessori/cover.mp4"
 }

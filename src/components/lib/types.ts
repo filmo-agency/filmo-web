@@ -10,20 +10,29 @@ export interface PromSummary {
   cover: string;
 }
 
+export interface SchoolLogos {
+  black: string;
+  color: string;
+  grayscale: string;
+  white: string;
+}
+
 export interface HomeSchool {
   slug: string;
   name: string;
   priority: number;
-  logo: string;
+  logos: SchoolLogos;
   cover: string;
-  prom: PromSummary;
+  prom: PromSummary | null;
 }
+
+export type HomeSchoolWithProm = HomeSchool & { prom: PromSummary };
 
 export interface SchoolPreview {
   id: string;
   name: string;
   cover: string;
-  logo: string;
+  logos: SchoolLogos;
   priority: number;
 }
 
@@ -43,7 +52,7 @@ export interface SchoolDetail {
   id: string;
   name: string;
   slug?: string;
-  logo: string;
+  logos: SchoolLogos;
   cover: string;
   proms: SchoolPromPreview[];
 }

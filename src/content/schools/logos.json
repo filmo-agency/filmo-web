@@ -1,12 +1,18 @@
 {
-  "slug": "logos",
   "name": "Logos Academy",
-  "priority": 4,
+  "slug": "logos",
+  "priority": 3,
+  "published": true,
+  "featuredPromId": 27,
   "promIds": [
     27
   ],
-  "featuredPromId": 27,
-  "published": true,
-  "logo": "/media/schools/logos/logo.png",
+  "logo": "/media/schools/logos/logo-color.webp",
+  "logos": {
+    "color": "/media/schools/logos/logo-color.webp",
+    "black": "/media/schools/logos/logo-black.webp",
+    "grayscale": "/media/schools/logos/logo-grayscale.webp",
+    "white": "/media/schools/logos/logo-white.webp"
+  },
   "cover": "/media/schools/logos/cover.webp"
 }
