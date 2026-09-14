@@ -17,6 +17,7 @@ const schools = defineCollection({
       })
       .optional(),
     cover: z.string(),
+    poster: z.string().optional(),
     published: z.boolean().default(true),
     featuredPromId: z.number().int().nullable(),
     promIds: z.array(z.number().int()),

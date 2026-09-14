@@ -1,0 +1,183 @@
+<div class="page-transition" aria-hidden="true">
+  <div class="page-transition-panel">
+    <div class="page-transition-curve page-transition-curve-top"><i></i></div>
+    <div class="page-transition-curve page-transition-curve-bottom"><i></i></div>
+    <div class="grain-overlay page-transition-grain"></div>
+    <img class="page-transition-logo" src="/svg/filmo.svg" alt="" />
+  </div>
+</div>
+
+<script>
+  const root = document.documentElement;
+  const transition = document.querySelector<HTMLElement>('.page-transition');
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  const transitionKey = 'filmo-page-transition';
+  let navigating = false;
+  let openingTimer: number | undefined;
+
+  function finishOpening() {
+    window.clearTimeout(openingTimer);
+    root.classList.remove('is-page-transition-entering', 'is-page-transition-opening');
+  }
+
+  function isPageLink(link: HTMLAnchorElement, event: MouseEvent) {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return false;
+    if (link.target || link.hasAttribute('download')) return false;
+    const destination = new URL(link.href, location.href);
+    return destination.origin === location.origin
+      && destination.pathname + destination.search !== location.pathname + location.search;
+  }
+
+  function revealDestination() {
+    try {
+      if (!sessionStorage.getItem(transitionKey)) return;
+      sessionStorage.removeItem(transitionKey);
+    } catch {
+      return;
+    }
+    if (reducedMotion.matches || !transition) return;
+    root.classList.add('is-page-transition-entering');
+    void transition.offsetWidth;
+    requestAnimationFrame(() => {
+      root.classList.add('is-page-transition-opening');
+      openingTimer = window.setTimeout(finishOpening, 1330);
+    });
+  }
+
+  document.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof Element) || navigating || reducedMotion.matches) return;
+    const link = target.closest<HTMLAnchorElement>('a[href]');
+    if (!link || !isPageLink(link, event)) return;
+    event.preventDefault();
+    try {
+      sessionStorage.setItem(transitionKey, 'true');
+    } catch {
+      location.href = link.href;
+      return;
+    }
+    navigating = true;
+    root.classList.add('is-page-transition-closing');
+    window.setTimeout(() => { location.href = link.href; }, 820);
+  });
+
+  window.addEventListener('pageshow', revealDestination);
+  revealDestination();
+</script>
+
+<style is:global>
+  .page-transition {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    overflow: clip;
+    pointer-events: none;
+  }
+
+  .page-transition-panel {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-filmo-black-100);
+    color: var(--color-filmo-black-100);
+    transform: translateY(100%);
+    will-change: transform;
+  }
+
+  .page-transition-curve {
+    position: absolute;
+    left: 0;
+    display: flex;
+    width: 100%;
+    height: clamp(96px, 15vw, 240px);
+    overflow: hidden;
+  }
+
+  .page-transition-curve-top { bottom: calc(100% - 1px); transform-origin: bottom center; }
+  .page-transition-curve-bottom { top: calc(100% - 1px); transform-origin: top center; }
+  .page-transition-curve i {
+    position: absolute;
+    left: 50%;
+    width: 125%;
+    height: 500%;
+    border-radius: 50%;
+    background: currentColor;
+    transform: translateX(-50%);
+  }
+  .page-transition-curve-top i { top: 0; }
+  .page-transition-curve-bottom i { bottom: 0; }
+
+  .page-transition-logo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: clamp(150px, 20vw, 280px);
+    height: auto;
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    will-change: opacity;
+  }
+  .page-transition-grain { opacity: 0.15; }
+
+  .is-page-transition-closing .page-transition,
+  .is-page-transition-entering .page-transition { display: block; }
+  .is-page-transition-closing .page-transition-panel {
+    animation: page-transition-cover 800ms var(--ease-filmo-reveal, cubic-bezier(0.23, 1, 0.32, 1)) both;
+  }
+  .is-page-transition-closing .page-transition-curve-top {
+    animation: page-transition-curve-in 800ms var(--ease-filmo-reveal, cubic-bezier(0.23, 1, 0.32, 1)) both;
+  }
+  .is-page-transition-closing .page-transition-logo {
+    animation: page-transition-logo-in 400ms var(--ease-filmo-reveal, cubic-bezier(0.23, 1, 0.32, 1)) 270ms both;
+  }
+
+  .is-page-transition-entering .page-transition-panel { transform: translateY(0); }
+  .is-page-transition-entering .page-transition-curve-top { transform: scaleY(1); }
+  .is-page-transition-entering .page-transition-logo { opacity: 1; }
+  .is-page-transition-opening .page-transition-panel {
+    animation: page-transition-reveal 1250ms var(--ease-filmo-reveal, cubic-bezier(0.23, 1, 0.32, 1)) both;
+  }
+  .is-page-transition-opening .page-transition-curve-top {
+    animation: page-transition-curve-out 1250ms var(--ease-filmo-reveal, cubic-bezier(0.23, 1, 0.32, 1)) both;
+  }
+  .is-page-transition-opening .page-transition-curve-bottom {
+    animation: page-transition-curve-out 1250ms var(--ease-filmo-reveal, cubic-bezier(0.23, 1, 0.32, 1)) both;
+  }
+
+  html.is-page-transition-closing,
+  html.is-page-transition-entering,
+  html.is-page-transition-opening { scrollbar-color: transparent transparent; }
+  html.is-page-transition-closing::-webkit-scrollbar-thumb,
+  html.is-page-transition-entering::-webkit-scrollbar-thumb,
+  html.is-page-transition-opening::-webkit-scrollbar-thumb,
+  html.is-page-transition-closing::-webkit-scrollbar-track,
+  html.is-page-transition-entering::-webkit-scrollbar-track,
+  html.is-page-transition-opening::-webkit-scrollbar-track { background: transparent; }
+
+  @keyframes page-transition-cover {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  @keyframes page-transition-reveal {
+    from { transform: translateY(0); }
+    to { transform: translateY(-100%); }
+  }
+  @keyframes page-transition-curve-in {
+    from { transform: scaleY(0); }
+    to { transform: scaleY(1); }
+  }
+  @keyframes page-transition-curve-out {
+    from { transform: scaleY(1); }
+    to { transform: scaleY(0); }
+  }
+  @keyframes page-transition-logo-in { from { opacity: 0; } to { opacity: 1; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .page-transition { display: none !important; }
+    .page-transition-grain { display: none; }
+  }
+</style>

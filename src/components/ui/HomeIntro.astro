@@ -1,0 +1,113 @@
+<div class="home-intro" aria-hidden="true">
+  <div class="home-intro-backdrop">
+    <div class="grain-overlay"></div>
+  </div>
+  <img class="home-intro-logo" src="/svg/filmo.svg" alt="" width="936" height="635" loading="eager" />
+</div>
+
+<style is:global>
+  .home-intro { display: none; position: fixed; inset: 0; z-index: 100; pointer-events: none; overflow: clip; }
+  .home-intro-backdrop { position: absolute; inset: 0; background: var(--color-filmo-black-100); }
+  .home-intro-logo { position: absolute; left: 50%; top: 50%; width: clamp(150px, 24vw, 300px); height: auto; transform: translate(-50%, -50%); opacity: 0; }
+  .home-intro-pending .home-intro { display: block; }
+  .home-intro-pending [data-home-hero] .hero-media,
+  .home-intro-pending [data-home-hero] .hero-overlay-gradient,
+  .home-intro-pending [data-home-hero] .hero-overlay-soft { opacity: 0; }
+  .home-intro-pending [data-nav-logo],
+  .home-intro-pending .navbar-shell .menu-toggle,
+  .home-intro-pending #primary-menu,
+  .home-intro-pending [data-hero-reveal] { opacity: 0; }
+  @media (prefers-reduced-motion: reduce) {
+    .home-intro .grain-overlay { display: none; }
+  }
+</style>
+
+<script>
+  const root = document.documentElement;
+  const overlay = document.querySelector<HTMLElement>('.home-intro');
+  const logo = overlay?.querySelector<HTMLImageElement>('.home-intro-logo');
+  const backdrop = overlay?.querySelector<HTMLElement>('.home-intro-backdrop');
+  const destination = document.querySelector<HTMLImageElement>('[data-nav-logo] img');
+  const heroLayers = document.querySelectorAll<HTMLElement>('[data-home-hero] .hero-media, [data-home-hero] .hero-overlay-gradient, [data-home-hero] .hero-overlay-soft');
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  const animations: Animation[] = [];
+  const events = new AbortController();
+  let finished = false;
+
+  function finish() {
+    finished = true;
+    root.classList.remove('home-intro-pending');
+    animations.forEach((animation) => animation.cancel());
+    events.abort();
+    overlay?.remove();
+  }
+
+  function animate(element: Element, frames: Keyframe[], duration: number, delay = 0, easing = 'cubic-bezier(0.23, 1, 0.32, 1)') {
+    const animation = element.animate(frames, { duration, delay, easing, fill: 'both' });
+    animations.push(animation);
+    return animation.finished;
+  }
+
+  async function play() {
+    if (!root.classList.contains('home-intro-pending') || !logo || !backdrop || !destination || window.scrollY > 12) {
+      finish();
+      return;
+    }
+    // Interaction always takes priority; resize ends the flight at the real nav.
+    for (const event of ['pointerdown', 'keydown', 'wheel', 'touchstart', 'resize', 'pagehide']) {
+      window.addEventListener(event, finish, { once: true, passive: true, signal: events.signal });
+    }
+    reducedMotion.addEventListener('change', finish, { signal: events.signal });
+    const safety = window.setTimeout(finish, 3500);
+    try {
+      await Promise.all([logo.decode(), destination.decode()]);
+      if (finished) return;
+      if (reducedMotion.matches) {
+        await Promise.all([
+          animate(backdrop, [{ opacity: 1 }, { opacity: 0 }], 200),
+          ...Array.from(heroLayers, (layer) => animate(layer, [{ opacity: 0 }, { opacity: 1 }], 200)),
+        ]);
+        return;
+      }
+      await animate(logo, [
+        { opacity: 0, transform: 'translate(-50%, -50%) scale(0.90)' },
+        { opacity: 1, transform: 'translate(-50%, -50%) scale(1)' },
+      ], 500, 300);
+      if (finished) return;
+      const from = logo.getBoundingClientRect();
+      const to = destination.getBoundingClientRect();
+      const dx = to.x + to.width / 2 - (from.x + from.width / 2);
+      const dy = to.y + to.height / 2 - (from.y + from.height / 2);
+      await Promise.all([
+        animate(logo, [
+          { transform: 'translate(-50%, -50%) scale(1)' },
+          { transform: `translate(-50%, -50%) translate(${dx}px, ${dy}px) scale(${to.width / from.width})` },
+        ], 850, 120, 'cubic-bezier(0.77, 0, 0.175, 1)'),
+        animate(backdrop, [{ opacity: 1 }, { opacity: 0 }], 600, 370),
+      ]);
+      if (finished) return;
+      const navLogo = destination.closest('[data-nav-logo]')!;
+      void animate(navLogo, [{ opacity: 1 }, { opacity: 1 }], 1);
+      logo.style.visibility = 'hidden';
+      const content = document.querySelectorAll('.navbar-shell .menu-toggle, #primary-menu, [data-hero-reveal]');
+      const titleIndex = Array.from(content).findIndex((element) => element.hasAttribute('data-hero-reveal'));
+      await Promise.all([
+        ...Array.from(content, (element, index) => animate(element, [
+          { opacity: 0, transform: 'translateY(8px)' },
+          { opacity: 1, transform: 'translateY(0)' },
+        ], 300, index * 60)),
+        ...Array.from(heroLayers, (layer) => animate(layer, [
+          { opacity: 0 },
+          { opacity: 1 },
+        ], 600, Math.max(0, titleIndex) * 60)),
+      ]);
+    } catch {
+      // Failed image loads or cancelled animations must never hide the page.
+    } finally {
+      window.clearTimeout(safety);
+      finish();
+    }
+  }
+
+  void play();
+</script>

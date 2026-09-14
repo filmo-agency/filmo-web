@@ -2,6 +2,11 @@
 import '@/styles/global.css';
 import Navbar from '@/components/ui/Navbar.astro';
 import Footer from '@/components/ui/Footer.astro';
+import SmoothScroll from '@/components/ui/SmoothScroll.astro';
+import PageMotion from '@/components/ui/PageMotion.astro';
+import PageLines from '@/components/ui/PageLines.astro';
+import PageTransition from '@/components/ui/PageTransition.astro';
+import { animationSettings } from '@/components/lib/animation-settings';
 import { normalizeCanonicalPath, toAbsoluteUrl } from '@/components/lib/seo';
 
 interface Props {
@@ -50,6 +55,18 @@ const jsonLdBlocks = Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [];
 <html lang="es">
   <head>
     <meta charset="utf-8" />
+    <script is:inline>
+      try {
+        window.__filmoFirstVisit = !sessionStorage.getItem('filmo-session-started');
+        sessionStorage.setItem('filmo-session-started', 'true');
+        if (sessionStorage.getItem('filmo-page-transition')) {
+          document.documentElement.classList.add('is-page-transition-entering');
+        }
+      } catch {
+        window.__filmoFirstVisit = false;
+      }
+    </script>
+    <slot name="head" />
     <link rel="icon" type="image/svg+xml" href="/svg/filmo.svg" />
     <link rel="icon" href="/favicon-48.png" />
     <link rel="preload" as="image" href="/svg/filmo.svg" type="image/svg+xml" />
@@ -85,7 +102,11 @@ const jsonLdBlocks = Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [];
       ))
     }
   </head>
-  <body>
+  <body class="scrollbar-gutter-auto">
+    {animationSettings.smoothScroll && <SmoothScroll />}
+    {animationSettings.sectionReveals && <PageMotion />}
+    {animationSettings.pageTransition === 'ronnsquare' && <PageTransition />}
+    {animationSettings.pageTransition === 'lines' && <PageLines />}
     <Navbar />
     <main><slot /></main>
     {!hideFooter && <Footer />}

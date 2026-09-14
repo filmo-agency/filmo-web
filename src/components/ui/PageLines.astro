@@ -1,0 +1,136 @@
+---
+const bands = Array.from({ length: 16 });
+---
+
+<div class="page-lines" aria-hidden="true">
+  {bands.map(() => <span class="page-lines-band"></span>)}
+</div>
+
+<script>
+  const root = document.documentElement;
+  const transition = document.querySelector<HTMLElement>('.page-lines');
+  const bands = transition?.querySelectorAll<HTMLElement>('.page-lines-band') ?? [];
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  const transitionKey = 'filmo-page-lines';
+  let navigating = false;
+  let openingTimer: number | undefined;
+
+  function finishOpening() {
+    window.clearTimeout(openingTimer);
+    root.classList.remove('is-lines-entering', 'is-lines-opening');
+  }
+
+  function isPageLink(link: HTMLAnchorElement, event: MouseEvent) {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return false;
+    if (link.target || link.hasAttribute('download')) return false;
+    const destination = new URL(link.href, location.href);
+    return destination.origin === location.origin
+      && destination.pathname + destination.search !== location.pathname + location.search;
+  }
+
+  function revealDestination() {
+    try {
+      if (!sessionStorage.getItem(transitionKey)) return;
+      sessionStorage.removeItem(transitionKey);
+    } catch {
+      return;
+    }
+    if (reducedMotion.matches || !transition) return;
+    root.classList.add('is-lines-entering');
+    void transition.offsetWidth;
+    requestAnimationFrame(() => {
+      root.classList.add('is-lines-opening');
+      // The last band finishes after 420ms; this is a deterministic fallback.
+      openingTimer = window.setTimeout(finishOpening, 460);
+    });
+  }
+
+  document.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof Element) || navigating || reducedMotion.matches) return;
+    const link = target.closest<HTMLAnchorElement>('a[href]');
+    if (!link || !isPageLink(link, event)) return;
+    event.preventDefault();
+    try {
+      sessionStorage.setItem(transitionKey, 'true');
+    } catch {
+      location.href = link.href;
+      return;
+    }
+    navigating = true;
+    root.classList.add('is-lines-closing');
+    window.setTimeout(() => { location.href = link.href; }, 360);
+  });
+
+  bands[0]?.addEventListener('animationend', (event) => {
+    if (event.animationName === 'lines-open' && root.classList.contains('is-lines-opening')) {
+      finishOpening();
+    }
+  });
+  window.addEventListener('pageshow', revealDestination);
+  revealDestination();
+</script>
+
+<style is:global>
+  .page-lines {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    pointer-events: none;
+  }
+
+  .page-lines-band {
+    display: block;
+    height: calc(100% / 16);
+    transform: scaleY(0.08);
+    transform-origin: center;
+    background: var(--color-filmo-black-100);
+  }
+
+  .is-lines-closing .page-lines,
+  .is-lines-entering .page-lines { display: block; }
+  html.is-lines-closing,
+  html.is-lines-entering,
+  html.is-lines-opening { scrollbar-color: transparent transparent; }
+  html.is-lines-closing::-webkit-scrollbar-thumb,
+  html.is-lines-entering::-webkit-scrollbar-thumb,
+  html.is-lines-opening::-webkit-scrollbar-thumb { background: transparent; }
+  html.is-lines-closing::-webkit-scrollbar-track,
+  html.is-lines-entering::-webkit-scrollbar-track,
+  html.is-lines-opening::-webkit-scrollbar-track { background: transparent; }
+  .is-lines-entering .page-lines-band { transform: scaleY(1); }
+  .is-lines-closing .page-lines-band {
+    animation: lines-close 170ms var(--ease-filmo-reveal, cubic-bezier(0.23, 1, 0.32, 1)) both;
+  }
+  .is-lines-opening .page-lines-band {
+    animation: lines-open 240ms var(--ease-filmo-reveal, cubic-bezier(0.23, 1, 0.32, 1)) both;
+  }
+
+  .is-lines-closing .page-lines-band:nth-child(1), .is-lines-opening .page-lines-band:nth-child(16) { animation-delay: 0ms; }
+  .is-lines-closing .page-lines-band:nth-child(2), .is-lines-opening .page-lines-band:nth-child(15) { animation-delay: 12ms; }
+  .is-lines-closing .page-lines-band:nth-child(3), .is-lines-opening .page-lines-band:nth-child(14) { animation-delay: 24ms; }
+  .is-lines-closing .page-lines-band:nth-child(4), .is-lines-opening .page-lines-band:nth-child(13) { animation-delay: 36ms; }
+  .is-lines-closing .page-lines-band:nth-child(5), .is-lines-opening .page-lines-band:nth-child(12) { animation-delay: 48ms; }
+  .is-lines-closing .page-lines-band:nth-child(6), .is-lines-opening .page-lines-band:nth-child(11) { animation-delay: 60ms; }
+  .is-lines-closing .page-lines-band:nth-child(7), .is-lines-opening .page-lines-band:nth-child(10) { animation-delay: 72ms; }
+  .is-lines-closing .page-lines-band:nth-child(8), .is-lines-opening .page-lines-band:nth-child(9) { animation-delay: 84ms; }
+  .is-lines-closing .page-lines-band:nth-child(9), .is-lines-opening .page-lines-band:nth-child(8) { animation-delay: 96ms; }
+  .is-lines-closing .page-lines-band:nth-child(10), .is-lines-opening .page-lines-band:nth-child(7) { animation-delay: 108ms; }
+  .is-lines-closing .page-lines-band:nth-child(11), .is-lines-opening .page-lines-band:nth-child(6) { animation-delay: 120ms; }
+  .is-lines-closing .page-lines-band:nth-child(12), .is-lines-opening .page-lines-band:nth-child(5) { animation-delay: 132ms; }
+  .is-lines-closing .page-lines-band:nth-child(13), .is-lines-opening .page-lines-band:nth-child(4) { animation-delay: 144ms; }
+  .is-lines-closing .page-lines-band:nth-child(14), .is-lines-opening .page-lines-band:nth-child(3) { animation-delay: 156ms; }
+  .is-lines-closing .page-lines-band:nth-child(15), .is-lines-opening .page-lines-band:nth-child(2) { animation-delay: 168ms; }
+  .is-lines-closing .page-lines-band:nth-child(16), .is-lines-opening .page-lines-band:nth-child(1) { animation-delay: 180ms; }
+
+  @keyframes lines-close { from { transform: scaleY(0.08); } to { transform: scaleY(1); } }
+  @keyframes lines-open {
+    from { opacity: 1; transform: scaleY(1); }
+    to { opacity: 0; transform: scaleY(0.01); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .page-lines { display: none !important; }
+  }
+</style>

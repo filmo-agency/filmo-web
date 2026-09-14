@@ -1,0 +1,62 @@
+<script>
+  import { gsap } from 'gsap';
+  import { CustomEase } from 'gsap/CustomEase';
+
+  gsap.registerPlugin(CustomEase);
+  CustomEase.create('filmo-reveal', '0.23, 1, 0.32, 1');
+  const preference = gsap.matchMedia();
+
+  preference.add({ reduced: '(prefers-reduced-motion: reduce)', full: '(prefers-reduced-motion: no-preference)' }, (context) => {
+    const reduced = context.conditions!.reduced;
+    const blocks = Array.from(document.querySelectorAll<HTMLElement>('[data-motion]'));
+    const tweens = new Map<HTMLElement, gsap.core.Tween>();
+    const targetsFor = (block: HTMLElement) => block.dataset.motion === 'group'
+      ? Array.from(block.children).filter((child) => !child.classList.contains('sr-only'))
+      : [block];
+
+    // Set only opacity before measuring: entrance transforms must not move triggers.
+    gsap.set(blocks.flatMap(targetsFor), { opacity: 0 });
+    const observer = new IntersectionObserver((entries) => {
+      entries.filter((entry) => entry.isIntersecting).forEach((entry, index) => {
+        const block = entry.target as HTMLElement;
+        observer.unobserve(block);
+        const card = block.dataset.motion === 'card';
+        const tween = gsap.fromTo(targetsFor(block), {
+          opacity: 0,
+          y: reduced ? 0 : card ? 40 : 24,
+        }, {
+          opacity: 1,
+          y: 0,
+          duration: reduced ? 0.2 : card ? 0.7 : 0.55,
+          delay: reduced ? 0 : Math.min(index, 3) * 0.06,
+          stagger: reduced ? 0 : 0.06,
+          ease: 'filmo-reveal',
+          onComplete: () => { gsap.set(targetsFor(block), { clearProps: 'opacity,transform' }); },
+        });
+        tweens.set(block, tween);
+      });
+    // Begin only once a meaningful part of the block is inside the viewport.
+    // This keeps the reveal visible with Lenis momentum instead of finishing below the fold.
+    }, { rootMargin: `0px 0px -${Math.round(innerHeight * 0.35)}px 0px`, threshold: 0.05 });
+    blocks.forEach((block) => observer.observe(block));
+
+    const revealFocused = (event: FocusEvent) => {
+      if (!(event.target instanceof Element)) return;
+      const block = event.target.closest<HTMLElement>('[data-motion]');
+      if (!block) return;
+      observer.unobserve(block);
+      tweens.get(block)?.progress(1);
+      gsap.set(targetsFor(block), { clearProps: 'opacity,transform' });
+    };
+    document.addEventListener('focusin', revealFocused);
+    return () => {
+      observer.disconnect();
+      document.removeEventListener('focusin', revealFocused);
+      tweens.forEach((tween) => tween.revert());
+    };
+  });
+</script>
+
+<style is:global>
+  :root { --ease-filmo-reveal: cubic-bezier(0.23, 1, 0.32, 1); }
+</style>

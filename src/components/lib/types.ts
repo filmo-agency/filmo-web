@@ -32,6 +32,7 @@ export interface SchoolPreview {
   id: string;
   name: string;
   cover: string;
+  poster?: string;
   logos: SchoolLogos;
   priority: number;
 }
@@ -54,6 +55,7 @@ export interface SchoolDetail {
   slug?: string;
   logos: SchoolLogos;
   cover: string;
+  poster?: string;
   proms: SchoolPromPreview[];
 }
 

@@ -31,6 +31,48 @@
     scroll-behavior: smooth;
   }
 
+  @media (forced-colors: none) {
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-filmo-yellow-100) var(--color-filmo-black-100);
+    }
+
+    @supports selector(::-webkit-scrollbar) {
+      * {
+        scrollbar-width: auto;
+        scrollbar-color: auto;
+      }
+
+      ::-webkit-scrollbar {
+        width: 12px;
+        height: 12px;
+      }
+
+      ::-webkit-scrollbar-track,
+      ::-webkit-scrollbar-corner {
+        background: #ffffff00;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        min-height: 40px;
+        border: 3px solid var(--color-filmo-black-100);
+        border-radius: 999px;
+        background: var(--color-filmo-black-100);
+        background-clip: padding-box;
+      }
+
+      @media (hover: hover) and (pointer: fine) {
+        ::-webkit-scrollbar-thumb:hover {
+          background-color: color-mix(in srgb, var(--color-filmo-yellow-100) 80%, var(--color-filmo-white));
+        }
+      }
+
+      ::-webkit-scrollbar-thumb:active {
+        background-color: var(--color-filmo-white);
+      }
+    }
+  }
+
   body {
     @apply min-h-svh bg-filmo-black-100 font-figtree text-white antialiased;
   }

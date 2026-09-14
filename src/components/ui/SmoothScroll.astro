@@ -1,0 +1,49 @@
+<script>
+  import Lenis from 'lenis';
+  import 'lenis/dist/lenis.css';
+
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  let lenis: Lenis | undefined;
+
+  function syncMenu() {
+    if (document.body.classList.contains('overflow-hidden')) {
+      lenis?.stop();
+    } else {
+      lenis?.start();
+    }
+  }
+
+  function setup() {
+    lenis?.destroy();
+    lenis = undefined;
+    if (reducedMotion.matches) return;
+    lenis = new Lenis({
+      autoRaf: true,
+      lerp: 0.1,
+      smoothWheel: true,
+      syncTouch: false,
+      anchors: { offset: -96 },
+      allowNestedScroll: true,
+    });
+    syncMenu();
+  }
+
+  const menuObserver = new MutationObserver(syncMenu);
+  menuObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+  reducedMotion.addEventListener('change', setup);
+  window.addEventListener('pagehide', () => {
+    lenis?.destroy();
+    lenis = undefined;
+  });
+  window.addEventListener('pageshow', (event) => {
+    if (event.persisted) setup();
+  });
+  setup();
+</script>
+
+<style is:global>
+  html.lenis { scroll-behavior: auto; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+</style>

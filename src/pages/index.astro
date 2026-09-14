@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@/components/layouts/BaseLayout.astro';
+import HomeIntro from '@/components/ui/HomeIntro.astro';
 import GrainSection from '@/components/layouts/GrainSection.astro';
 import { getHomeSchools, hasFeaturedProm } from '@/components/lib/content';
 import type { HomeSchool } from '@/components/lib/types';
@@ -9,6 +10,7 @@ import YellowButton from '@/components/ui/YellowButton.astro';
 import CTA from '@/components/sections/CTA.astro';
 import IG from '@/components/sections/IG.astro';
 import { toAbsoluteUrl } from '@/components/lib/seo';
+import { animationSettings } from '@/components/lib/animation-settings';
 
 const schools = await getHomeSchools();
 
@@ -80,9 +82,18 @@ const schemaWebsite = {
   ogImage="/og/filmo-og.png"
   jsonLd={[schemaHome, schemaWebsite]}
 >
-  <section class="relative min-h-[84vh] overflow-clip">
+  {animationSettings.homeIntro && <script is:inline slot="head">
+    // Arm before first paint; fail open if the animation module cannot load.
+    if (window.__filmoFirstVisit && !location.hash && window.scrollY < 12) {
+      document.documentElement.classList.add('home-intro-pending');
+      window.setTimeout(() => document.documentElement.classList.remove('home-intro-pending'), 4500);
+    }
+  </script>}
+  {animationSettings.homeIntro && <HomeIntro />}
+  <section data-home-hero class="relative min-h-svh overflow-clip">
     <video
-      class="hero-media brightness-50 md:brightness-90"
+      class="hero-media home-hero-parallax brightness-50 md:brightness-60"
+      data-home-hero-parallax
       autoplay
       muted
       loop
@@ -102,23 +113,63 @@ const schemaWebsite = {
     <div class="hero-overlay-soft" aria-hidden="true"></div>
 
     <div
-      class="site-container relative z-10 flex min-h-[83vh] pb-24 items-end justify-center"
+      class="site-container home-hero-content-parallax relative z-10 flex min-h-[87vh] pb-24 items-end justify-center"
+      data-home-hero-parallax-content
     >
       <div
         class="text-center flex flex-col gap-8 items-center justify-center w-full lg:max-w-10/12"
       >
-        <h1 class="text-balance lg:text-pretty text-6xl md:text-8xl">
+        <h1 data-hero-reveal class="text-balance lg:text-pretty text-6xl md:text-8xl">
           <span class="lg:block">Especialistas en</span>
           <span class="lg:block">capturar historias únicas</span>
         </h1>
-        <p class="max-w-3/4 md:text-xl font-figtree font-medium md:max-w-5/12">
+        <p data-hero-reveal class="max-w-3/4 md:text-xl font-figtree font-medium md:max-w-5/12">
           Cada sonrisa, abrazo y logro merece ser eterno. Déjanos contar tu
           historia en imágenes.
         </p>
-        <YellowButton href="/portafolio" text="Conoce nuestro trabajo" />
+        <div data-hero-reveal>
+          <YellowButton href="/portafolio" text="Conoce nuestro trabajo" />
+        </div>
       </div>
     </div>
   </section>
+  <script>
+    const hero = document.querySelector<HTMLElement>('[data-home-hero]');
+    const heroMedia = document.querySelector<HTMLElement>('[data-home-hero-parallax]');
+    const heroContent = document.querySelector<HTMLElement>('[data-home-hero-parallax-content]');
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+    let parallaxFrame = 0;
+
+    const updateHeroParallax = () => {
+      parallaxFrame = 0;
+      if (!hero || !heroMedia) return;
+      if (reducedMotion.matches) {
+        heroMedia.style.transform = '';
+        heroContent?.style.removeProperty('transform');
+        return;
+      }
+      const progress = Math.min(Math.max(-hero.getBoundingClientRect().top / hero.offsetHeight, 0), 1);
+      heroMedia.style.transform = `translate3d(0, ${progress * 58}%, 0) scale(1.16)`;
+      if (heroContent) heroContent.style.transform = `translate3d(0, ${progress * 36}%, 0)`;
+    };
+
+    const requestHeroParallax = () => {
+      if (!parallaxFrame) parallaxFrame = requestAnimationFrame(updateHeroParallax);
+    };
+
+    window.addEventListener('scroll', requestHeroParallax, { passive: true });
+    window.addEventListener('resize', requestHeroParallax, { passive: true });
+    reducedMotion.addEventListener('change', requestHeroParallax);
+    requestHeroParallax();
+  </script>
+  <style>
+    .home-hero-parallax { transform: scale(1.16); will-change: transform; }
+    .home-hero-content-parallax { will-change: transform; }
+    @media (prefers-reduced-motion: reduce) {
+      .home-hero-parallax { transform: none; }
+      .home-hero-content-parallax { transform: none; }
+    }
+  </style>
   <GrainSection>
     <div class="site-container flex flex-col items-center gap-16">
       <h2 class="text-lg text-filmo-gray font-figtree font-medium uppercase">
@@ -167,10 +218,10 @@ const schemaWebsite = {
     </div>
   </GrainSection>
   <GrainSection>
-    <div class="hidden sm:flex site-container flex-row">
+    <div data-about-layout class="hidden sm:flex site-container flex-row">
       <div class="w-7/12 flex flex-col items-start gap-24">
         <div class="w-6/7 flex flex-col gap-24">
-          <div class="flex flex-col items-center text-center gap-9">
+          <div data-about-reveal class="flex flex-col items-center text-center gap-9">
             <div class="flex flex-col gap-3 items-center">
               <span class="text-filmo-gray uppercase font-medium"
                 >Como si fuera ese día otra vez</span
@@ -215,7 +266,7 @@ const schemaWebsite = {
               decoding="async"
             />
           </div>
-          <div class="w-full flex flex-col gap-6">
+          <div data-about-reveal class="w-full flex flex-col gap-6">
             <h2 class="text-5xl uppercase leading-[100%] text-right">
               <span class="2xl:block">Vives y disfrutas al</span>
               <span class="2xl:block">máximo, se nota en</span>
@@ -250,8 +301,8 @@ const schemaWebsite = {
       </div>
     </div>
 
-    <div class="pt-5 pb-10 flex sm:hidden site-container flex-col gap-2">
-      <div class="w-full translate-y-10 flex flex-col items-start text-left gap-6">
+    <div data-about-layout class="pt-5 pb-10 flex sm:hidden site-container flex-col gap-2">
+      <div data-about-reveal class="w-full translate-y-10 flex flex-col items-start text-left gap-6">
         <div class="flex flex-col gap-3 items-start">
           <span class="text-filmo-gray text-sm uppercase font-medium"
             >Como si fuera ese día otra vez</span
@@ -282,7 +333,7 @@ const schemaWebsite = {
           decoding="async"
         />
       </div>
-      <div class="mb-8 w-full flex flex-col gap-6">
+      <div data-about-reveal class="mb-8 w-full flex flex-col gap-6">
         <div class="flex flex-col items-end gap-2">
           <h2 class="text-3xl uppercase text-right">
             <span class="">Vives y disfrutas al</span>
@@ -346,6 +397,86 @@ const schemaWebsite = {
   <CTA />
   <IG />
 </BaseLayout>
+
+<script>
+  import { gsap } from 'gsap';
+  import { CustomEase } from 'gsap/CustomEase';
+
+  gsap.registerPlugin(CustomEase);
+  CustomEase.create('about-reveal', '0.23, 1, 0.32, 1');
+  const motion = gsap.matchMedia();
+
+  motion.add({
+    desktop: '(min-width: 640px)',
+    mobile: '(max-width: 639px)',
+    reduced: '(prefers-reduced-motion: reduce)',
+  }, (context) => {
+    const { desktop, reduced } = context.conditions!;
+    const layout = document.querySelectorAll<HTMLElement>('[data-about-layout]')[desktop ? 0 : 1];
+    if (!layout) return;
+    const blocks = layout.querySelectorAll<HTMLElement>('[data-about-reveal], img');
+    const running = new Map<HTMLElement, gsap.core.Tween>();
+    const tweens: gsap.core.Tween[] = [];
+    const seen = new Set<HTMLElement>();
+    const getTargets = (block: HTMLElement) => block.tagName === 'IMG' ? [block] : Array.from(block.children);
+    // Hide before observation; keep layout geometry intact for the trigger.
+    gsap.set(Array.from(blocks).flatMap(getTargets), { opacity: 0 });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.filter((entry) => entry.isIntersecting).forEach((entry, order) => {
+        const block = entry.target as HTMLElement;
+        observer.unobserve(block);
+        if (seen.has(block)) return;
+        seen.add(block);
+        const photo = block.tagName === 'IMG';
+        const index = Array.from(blocks).indexOf(block);
+        // Animate text children, preserving the mobile block's existing offset.
+        const targets = getTargets(block);
+        const tween = gsap.fromTo(targets, {
+          opacity: 0,
+          y: reduced ? 0 : photo ? (desktop ? 64 : 40) : 32,
+          rotation: reduced || !photo ? 0 : (index % 2 ? 5 : -5),
+          scale: reduced || !photo ? 1 : 0.9,
+        }, {
+          opacity: 1,
+          y: 0,
+          rotation: 0,
+          scale: 1,
+          duration: reduced ? 0.2 : photo ? 1.1 : 0.85,
+          delay: reduced ? 0 : Math.min(order, 3) * 0.08,
+          stagger: reduced ? 0 : 0.08,
+          ease: 'about-reveal',
+          onComplete: () => running.delete(block),
+        });
+        running.set(block, tween);
+        tweens.push(tween);
+      });
+    }, {
+      // Trigger inside the viewport, not as soon as an edge touches the screen.
+      // Pixels keep this margin relative to viewport height on mobile as well.
+      rootMargin: `0px 0px -${Math.round(window.innerHeight * 0.25)}px 0px`,
+      threshold: 0,
+    });
+
+    blocks.forEach((block) => observer.observe(block));
+    const onFocus = (event: FocusEvent) => {
+      if (!(event.target instanceof Element)) return;
+      const block = event.target.closest<HTMLElement>('[data-about-reveal]');
+      if (!block || !layout.contains(block)) return;
+      seen.add(block);
+      observer.unobserve(block);
+      running.get(block)?.progress(1);
+      gsap.set(getTargets(block), { opacity: 1 });
+    };
+    layout.addEventListener('focusin', onFocus);
+    return () => {
+      observer.disconnect();
+      layout.removeEventListener('focusin', onFocus);
+      tweens.forEach((tween) => tween.revert());
+      running.clear();
+    };
+  });
+</script>
 
 <style>
   .trust-carousel {

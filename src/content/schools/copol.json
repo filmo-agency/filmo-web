@@ -14,5 +14,6 @@
     "grayscale": "/media/schools/copol/logo-grayscale.webp",
     "white": "/media/schools/copol/logo-white.webp"
   },
-  "cover": "/media/schools/copol/cover.mp4"
+  "cover": "/media/schools/copol/cover.mp4",
+  "poster": "/media/schools/copol/cover-poster.webp"
 }

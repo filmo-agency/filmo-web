@@ -166,7 +166,7 @@ const jsonLd = schemaVideo
       <BreadCrumbs items={crumbs} />
 
       <div
-        class="text-center flex flex-col gap-2 w-fit lg:gap-4 items-center"
+        data-motion="group" class="text-center flex flex-col gap-2 w-fit lg:gap-4 items-center"
       >
         <h1 class="text-5xl lg:text-8xl">
           {promKicker}
@@ -178,7 +178,7 @@ const jsonLd = schemaVideo
     <div class="site-container flex flex-col gap-8 lg:gap-16">
       {
         prom.text ? (
-          <section class="flex flex-col w-full lg:w-10/12">
+          <section data-motion="group" class="flex flex-col w-full lg:w-10/12">
             <p class="font-garamond font-semibold text-2xl lg:text-4xl" set:html={prom.text} />
             {
               prom.subText ?? (
@@ -197,7 +197,7 @@ const jsonLd = schemaVideo
       { prom.videoId ? (
           <section class="flex flex-col items-center gap-8 lg:gap-16 pb-16">
 
-            <div class="flex flex-col items-center text-center">
+            <div data-motion="group" class="flex flex-col items-center text-center">
               <span class="font-medium text-filmo-gray uppercase">Video</span>
               <h2 class="text-white font-extrabold text-4xl text-balance lg:text-6xl">
                 <span class="lg:block">Un resumen</span>
@@ -228,7 +228,7 @@ const jsonLd = schemaVideo
       {
         hasRelatedWorks ? (
           <section class="flex w-full flex-col items-center gap-2 pb-16 pt-8 lg:gap-10 lg:pt-10">
-            <div class="flex w-full flex-col items-center gap-1 text-center">
+            <div data-motion="group" class="flex w-full flex-col items-center gap-1 text-center">
               <span class="font-medium text-filmo-gray uppercase">
                 {showOtherProms ? schoolName : 'colegios'}
               </span>

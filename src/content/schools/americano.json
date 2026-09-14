@@ -16,5 +16,6 @@
     "grayscale": "/media/schools/americano/logo-grayscale.webp",
     "white": "/media/schools/americano/logo-white.webp"
   },
-  "cover": "/media/schools/americano/cover.mp4"
+  "cover": "/media/schools/americano/cover.mp4",
+  "poster": "/media/schools/americano/cover-poster.webp"
 }

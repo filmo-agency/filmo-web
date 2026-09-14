@@ -149,6 +149,7 @@ export async function getPortfolioSchools(): Promise<PortfolioSchool[]> {
     priority: school.priority,
     logos: getSchoolLogos(school),
     cover: school.cover,
+    poster: school.poster,
   }));
 }
 
@@ -178,6 +179,7 @@ export async function getSchoolDetail(
     name: school.name,
     logos: getSchoolLogos(school),
     cover: school.cover,
+    poster: school.poster,
     proms: school.promIds.map((promId) => {
       const prom = promById.get(promId);
 

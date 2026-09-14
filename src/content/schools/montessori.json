@@ -16,5 +16,6 @@
     "grayscale": "/media/schools/montessori/logo-grayscale.webp",
     "white": "/media/schools/montessori/logo-white.webp"
   },
-  "cover": "/media/schools/montessori/cover.mp4"
+  "cover": "/media/schools/montessori/cover.mp4",
+  "poster": "/media/schools/montessori/cover-poster.webp"
 }

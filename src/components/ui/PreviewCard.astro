@@ -26,15 +26,16 @@ const promHref =
   type === 'prom' ? `/portafolio/${props.item.schoolSlug}/${props.item.id}` : '';
 ---
 
-<article class="group w-full flex flex-col items-center gap-3" data-hover-card>
+<article class="group w-full flex flex-col items-center gap-3" data-hover-card data-motion="card">
   {
     isSchoolPreview ? (
       <>
-        <a class="order-1 lg:order-2" href={`/portafolio/${props.item.id}`}>
+        <a class="order-1 block w-full lg:order-2" href={`/portafolio/${props.item.id}`}>
           {hasVideoCover ? (
             <video
-              class="aspect-4/3 h-full object-cover sm:aspect-video rounded-xl grayscale transition duration-300 group-hover:grayscale-0 in-[.is-active]:grayscale-0 in-[.is-ipad-pro]:grayscale-0"
+              class="block w-full aspect-4/3 object-cover sm:aspect-video rounded-xl grayscale transition duration-300 group-hover:grayscale-0 in-[.is-active]:grayscale-0 in-[.is-ipad-pro]:grayscale-0"
               src={props.item.cover}
+              poster={props.item.poster}
               muted
               loop
               playsinline
@@ -43,7 +44,7 @@ const promHref =
             />
           ) : (
             <img
-              class="aspect-4/3 h-full object-cover sm:aspect-video rounded-xl grayscale transition duration-300 group-hover:grayscale-0 in-[.is-active]:grayscale-0 in-[.is-ipad-pro]:grayscale-0"
+              class="block w-full aspect-4/3 object-cover sm:aspect-video rounded-xl grayscale transition duration-300 group-hover:grayscale-0 in-[.is-active]:grayscale-0 in-[.is-ipad-pro]:grayscale-0"
               src={props.item.cover}
               alt={`Portada de ${props.item.name}`}
               loading="lazy"
@@ -57,7 +58,7 @@ const promHref =
         </h2>
         <div class="relative order-3 mt-2 h-14 w-full max-md:hidden">
           <img
-            class="absolute inset-0 mx-auto h-14 max-w-full object-contain opacity-70 transition-opacity duration-300 group-hover:opacity-0 in-[.is-active]:opacity-0 in-[.is-ipad-pro]:opacity-0"
+            class="absolute inset-0 mx-auto h-16 max-w-50 object-contain opacity-70 transition-opacity duration-300 group-hover:opacity-0 in-[.is-active]:opacity-0 in-[.is-ipad-pro]:opacity-0"
             src={props.item.logos.white}
             alt={props.item.name}
             loading="lazy"
@@ -65,7 +66,7 @@ const promHref =
             decoding="async"
           />
           <img
-            class="absolute inset-0 mx-auto h-14 max-w-full object-contain opacity-0 transition-opacity duration-300 group-hover:opacity-100 in-[.is-active]:opacity-100 in-[.is-ipad-pro]:opacity-100"
+            class="absolute inset-0 mx-auto h-16 max-w-50 object-contain opacity-0 transition-opacity duration-300 group-hover:opacity-100 in-[.is-active]:opacity-100 in-[.is-ipad-pro]:opacity-100"
             src={props.item.logos.color}
             alt=""
             aria-hidden="true"
@@ -156,16 +157,15 @@ const promHref =
           if (!(card instanceof HTMLElement)) return;
 
           const video = card.querySelector('[data-hover-video]');
-          if (!(video instanceof HTMLVideoElement)) return;
 
           if (entry.isIntersecting) {
             card.classList.add('is-active');
-            video.play().catch(() => {});
+            if (video instanceof HTMLVideoElement) video.play().catch(() => {});
             return;
           }
 
           card.classList.remove('is-active');
-          video.pause();
+          if (video instanceof HTMLVideoElement) video.pause();
         });
       },
       { threshold: 0.6 },
@@ -181,11 +181,10 @@ const promHref =
     cards.forEach((card) => {
       if (!(card instanceof HTMLElement)) return;
       const video = card.querySelector('[data-hover-video]');
-      if (!(video instanceof HTMLVideoElement)) return;
 
       if (ipadProQuery.matches) {
         card.classList.add('is-ipad-pro');
-        video.pause();
+        if (video instanceof HTMLVideoElement) video.pause();
         return;
       }
 

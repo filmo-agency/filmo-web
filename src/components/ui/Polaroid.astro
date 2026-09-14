@@ -6,6 +6,6 @@ type Props = {
 
 const { img, cls } = Astro.props;
 ---
-<div class={"bg-white aspect-square p-4 pb-16 lg:p-6 lg:pb-32 " + (cls ? ` ${cls}` : '')}>
+<div data-motion="card" class={"bg-white aspect-square p-4 pb-16 lg:p-6 lg:pb-32 " + (cls ? ` ${cls}` : '')}>
 <img src={img} class="w-full" alt="Polaroid" loading="lazy" fetchpriority="low" decoding="async">
 </div>

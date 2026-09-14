@@ -15,5 +15,6 @@
     "grayscale": "/media/schools/interamerican/logo-grayscale.webp",
     "white": "/media/schools/interamerican/logo-white.webp"
   },
-  "cover": "/media/schools/interamerican/cover.mp4"
+  "cover": "/media/schools/interamerican/cover.mp4",
+  "poster": "/media/schools/interamerican/cover-poster.webp"
 }

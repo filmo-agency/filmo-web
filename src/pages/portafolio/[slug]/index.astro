@@ -59,6 +59,7 @@ const schemaSchool = {
       hasVideoCover ? (
         <video
           src={school.cover}
+          poster={school.poster}
           class="hero-media brightness-50 md:brightness-60"
           autoplay
           preload="metadata"
@@ -91,7 +92,7 @@ const schemaSchool = {
     >
       <BreadCrumbs items={crumbs} />
 
-      <div class="text-center flex flex-col gap-2 w-fit lg:gap-4 items-center">
+      <div data-motion="group" class="text-center flex flex-col gap-2 w-fit lg:gap-4 items-center">
         <h1 class="text-5xl lg:text-8xl sr-only">
           <span class="lg:block">{school.name}</span>
         </h1>
