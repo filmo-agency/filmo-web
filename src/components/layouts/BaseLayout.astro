@@ -102,7 +102,6 @@ const jsonLdBlocks = Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [];
         <script type="application/ld+json" set:html={JSON.stringify(schema)} />
       ))
     }
-    <Analytics />
   </head>
   <body class="scrollbar-gutter-auto">
     {animationSettings.smoothScroll && <SmoothScroll />}
@@ -112,5 +111,6 @@ const jsonLdBlocks = Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [];
     <Navbar />
     <main><slot /></main>
     {!hideFooter && <Footer />}
+    <Analytics />
   </body>
 </html>
