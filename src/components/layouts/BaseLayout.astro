@@ -8,6 +8,7 @@ import PageLines from '@/components/ui/PageLines.astro';
 import PageTransition from '@/components/ui/PageTransition.astro';
 import { animationSettings } from '@/components/lib/animation-settings';
 import { normalizeCanonicalPath, toAbsoluteUrl } from '@/components/lib/seo';
+import Analytics from '@vercel/analytics/astro'
 
 interface Props {
   title?: string;
@@ -101,6 +102,7 @@ const jsonLdBlocks = Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [];
         <script type="application/ld+json" set:html={JSON.stringify(schema)} />
       ))
     }
+    <Analytics />
   </head>
   <body class="scrollbar-gutter-auto">
     {animationSettings.smoothScroll && <SmoothScroll />}
